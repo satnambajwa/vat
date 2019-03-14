@@ -1,0 +1,9 @@
+.test{
+    text-align: end;
+    padding-top: 25px;
+    font-size: 1.2rem;
+}
+.w200{width: 200px;}
+.lablef{float:left;width:20%}
+.fr{float:right}
+.mtb{margin-top: 2%; margin-bottom: 2%;}
