@@ -46,9 +46,9 @@
                <li class="dropdown nav-item" data-menu="dropdown">
                   <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown"><i class="la la-share-alt"></i><span>Contacts</span></a>
                   <ul class="dropdown-menu">
-                   <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">All Contacts</a></li>
-                   <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Customers</a></li>
-                    <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Suppliers</a></li>
+                   <li data-menu=""><a class="dropdown-item" href="{{url('/contacts')}}" data-toggle="dropdown">All Contacts</a></li>
+                   <li data-menu=""><a class="dropdown-item" href="{{url('/contacts')}}" data-toggle="dropdown">Customers</a></li>
+                    <li data-menu=""><a class="dropdown-item" href="{{url('/contacts')}}" data-toggle="dropdown">Suppliers</a></li>
                   
                         </ul>
                </li>

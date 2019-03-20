@@ -2,7 +2,7 @@
     <div class="col-sm-12 card">
         
         <div class="table-responsive">
-            <table class="table table-bordered" id="invoices-approval">
+            <table class="table table-bordered" id="invoices-all">
                 <thead>
                     <tr>
                         <th>Code</th>
@@ -10,10 +10,9 @@
                         <th>To</th>
                         <th>Date</th>
                         <th>Due Date</th>
-                        <th>Paid</th>
-                        <th>Due</th>
+                        <th>Sub Total</th>
+                        <th>Total</th>
                         <th>Status</th>
-                        <th>Sent</th>
                     </tr>
                 </thead>
             </table>
@@ -21,10 +20,10 @@
     </div>
     <script>
         $(function() {
-            var invoicesDraft = $('#invoices-approval').DataTable({
+            var invoicesAll = $('#invoices-all').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{!! route('get.data', "approval") !!}',
+                ajax: '{!! route('get.data', "all") !!}',
                 
                 columns: [
                     {
@@ -48,13 +47,13 @@
             });
 
 
-            $('#invoices-approval tbody').on( 'click', 'tr', function () {
+            $('#invoices-all tbody').on( 'click', 'tr', function () {
                 $(this).toggleClass('selected');
                 console.log('dsdsds');
             } );
 
             $('#button').click( function () {
-                alert( invoicesDraft.rows('.selected').data().length +' row(s) selected' );
+                alert( invoicesAll.rows('.selected').data().length +' row(s) selected' );
             } );
         });
     </script>

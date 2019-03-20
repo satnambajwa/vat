@@ -24,6 +24,7 @@ class CreateInvoicesTable extends Migration
             $table->string('estimated_date');//due date or delivery date 
             $table->enum('amount_tax',array('Tax Exclusive','Tax Inclusive','No Tax'));
             $table->decimal('sub_total', 10, 2);
+            $table->decimal('discount', 5, 2);
             $table->decimal('vat', 5, 2);
             $table->decimal('total', 10, 2);
             $table->enum('type',array('Invoice','Purchase Order','Quote'));

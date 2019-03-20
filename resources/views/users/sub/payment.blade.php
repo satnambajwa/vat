@@ -1,6 +1,5 @@
 <div class="row">
     <div class="col-sm-12 card">
-        
         <div class="table-responsive">
             <table class="table table-bordered" id="invoices-payment">
                 <thead>
@@ -10,25 +9,21 @@
                         <th>To</th>
                         <th>Date</th>
                         <th>Due Date</th>
-                        <th>Paid</th>
-                        <th>Due</th>
+                        <th>Sub Total</th>
+                        <th>Total</th>
                         <th>Status</th>
-                        <th>Sent</th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
-    <script src="//code.jquery.com/jquery.js"></script>
-    <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js" defer></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
     <script>
         $(function() {
-            var invoicesDraft = $('#invoices-payment').DataTable({
+            var invoicesPayment = $('#invoices-payment').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: '{!! route('get.data', "payment") !!}',
-                
                 columns: [
                     {
                         "data": "id",
@@ -57,7 +52,7 @@
             } );
 
             $('#button').click( function () {
-                alert( invoicesDraft.rows('.selected').data().length +' row(s) selected' );
+                alert( invoicesPayment.rows('.selected').data().length +' row(s) selected' );
             } );
         });
     </script>

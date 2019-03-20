@@ -12,10 +12,8 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-
-Route::get('/orders', 'Users@invoice')->middleware('client');
+Route::middleware('auth:api')->get('/invoices/{id}', 'InvoiceController@show');
+Route::middleware('auth:api')->post('/invoices/{id}/save', 'InvoiceController@save');

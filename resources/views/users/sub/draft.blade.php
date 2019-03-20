@@ -10,18 +10,14 @@
                         <th>To</th>
                         <th>Date</th>
                         <th>Due Date</th>
-                        <th>Paid</th>
-                        <th>Due</th>
+                        <th>Sub Total</th>
+                        <th>Total</th>
                         <th>Status</th>
-                        <th>Sent</th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
-    <script src="//code.jquery.com/jquery.js"></script>
-    <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js" defer></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script>
         $(function() {
             var invoicesDraft = $('#invoices-draft').DataTable({

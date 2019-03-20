@@ -121,3 +121,96 @@ div.dataTables_filter input {
     line-height: 1.5;
     border-radius: 0.2rem;
 }
+.in-drop{
+    background: #fff;
+    border-radius: 6px 6px;
+    margin-top: 2px;
+    box-shadow: 4px 1px 18px 1px #cccccc69;
+    z-index: 1000;
+    position: absolute;
+    width: 16%;
+}
+.in-drop-box{    
+    display: block;
+    width: 80%;
+    float: left;
+    height: -webkit-calc(2.75rem + 2px);
+    height: -moz-calc(2.75rem + 2px);
+    height: calc(2.75rem + 2px);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: #4E5154;
+    background-color: #FFFFFF;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #babfc769;
+    border-radius: 0.25rem;
+    -webkit-transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+    -o-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    -moz-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+}
+li{list-style: none;}
+.add-button{float: left;width: 19%;font-size: x-large;}
+.table-editable{height: 350px;}
+
+
+
+/* Style the tab */
+.tab {
+  float: left;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  width: 30%;
+  height: auto;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  display: block;
+  background-color: inherit;
+  color: black;
+  padding: 14px 16px;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current "tab button" class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  float: left;
+  padding: 0px 12px;
+  
+  width: 70%;
+  border-left: none;
+  height: auto;
+}
+
+.tab-text{ margin-top: 10px; }
+.tab-row{border: 1px solid #ccc;
+padding-bottom: 10px;}
+.tab-new{    padding-left: 10px;
+    color: #666ee7;
+ font-size: 1.3rem; 
+ font-weight: 600;}
+
+ .hide{
+    display: none !important;
+}
