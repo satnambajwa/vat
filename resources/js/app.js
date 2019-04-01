@@ -9,7 +9,8 @@ function App(){
     return (
         <div>
             <Route exact path="/" component={Dashboard}/>
-            <Route path="/invoice" component={Invoice}/>
+            <Route path="/invoice/:id" component={Invoice}/>
+            <Route path="/purchase" render={(props) => <Invoice {...props} type='purchase' />}/>
         </div>
     );
 }

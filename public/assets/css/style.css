@@ -157,60 +157,29 @@ li{list-style: none;}
 .add-button{float: left;width: 19%;font-size: x-large;}
 .table-editable{height: 350px;}
 
-
-
 /* Style the tab */
-.tab {
-  float: left;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-  width: 30%;
-  height: auto;
-}
-
+.tab {float: left; border: 1px solid #ccc; background-color: #f1f1f1; width: 30%; height: auto;}
 /* Style the buttons inside the tab */
-.tab button {
-  display: block;
-  background-color: inherit;
-  color: black;
-  padding: 14px 16px;
-  width: 100%;
-  border: none;
-  outline: none;
-  text-align: left;
-  cursor: pointer;
-  transition: 0.3s;
-  font-size: 17px;
-}
-
+.tab button {display: block;background-color: inherit;color: black;padding: 14px 16px;width: 100%;border: none;
+outline: none;text-align: left;cursor: pointer;transition: 0.3s;font-size: 17px;}
 /* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
-
+.tab button:hover {background-color: #ddd;}
 /* Create an active/current "tab button" class */
-.tab button.active {
-  background-color: #ccc;
-}
-
+.tab button.active {background-color: #ccc;}
 /* Style the tab content */
-.tabcontent {
-  float: left;
-  padding: 0px 12px;
-  
-  width: 70%;
-  border-left: none;
-  height: auto;
-}
-
+.tabcontent {float: left;padding: 0px 12px;width: 70%;border-left: none;height: auto;}
 .tab-text{ margin-top: 10px; }
-.tab-row{border: 1px solid #ccc;
-padding-bottom: 10px;}
-.tab-new{    padding-left: 10px;
-    color: #666ee7;
- font-size: 1.3rem; 
- font-weight: 600;}
+.tab-row{border: 1px solid #ccc;padding-bottom: 10px;}
+.tab-new{    padding-left: 10px;color: #666ee7;font-size: 1.3rem; font-weight: 600;}
+.hide{display: none !important;}
+.mr10{ margin-right: 10px;}
 
- .hide{
-    display: none !important;
-}
+.ul-panel{background-color:#fff;border-radius:3px;box-shadow:0 0 0 1px rgba(0,10,30,.2);list-style-type: none;margin: 0;padding: 0;}
+.ul-panel li{border-top:1px solid #ccced2;margin:0;padding: 15px;font-size: 12px;font-weight: 400;}
+.ul-panel li:first-child{border-top:0;}
+.ul-panel li.header{line-height:1.3077;font-weight:700;font-size:.9375rem;margin:0;text-align:center}
+
+.modal-dialog {max-width : 850px !important;}
+form .form-group {margin-bottom: 1rem;}
+.bbg{border-bottom:1px solid #d4cccc}
+.mb-30{margin-bottom: 25px;}

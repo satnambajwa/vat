@@ -4,8 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class taxes extends Model
+
+class AccountGroups extends Model
 {
+    protected $table = 'account_groups';
     public function accounts()
     {
         return $this->hasMany('App\account');

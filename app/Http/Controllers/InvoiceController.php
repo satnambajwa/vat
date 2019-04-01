@@ -1,10 +1,13 @@
 <?php
 namespace App\Http\Controllers;
+
+ini_set('memory_limit', -1);
 use Illuminate\Http\Request;
 
 
 use App\Invoice;
 use App\Taxes;
+use App\Account;
 use App\Item;
 use App\Http\Resources\Invoice as InvoiceResource;
 use App\Http\Resources\InvoiceCollection;
@@ -18,42 +21,48 @@ class InvoiceController extends Controller
 
     public function show($id)
     {
-        $dat=   Invoice::findOrFail($id);
-        $data['id'] =   $dat->id;
-        $data['contact_id'] =   $dat->contact_id;
-        $data['date'] =   $dat->date;
-        $data['estimated_date'] =   $dat->estimated_date;
-        $data['code'] =   $dat->code;
-        $data['reference'] =   $dat->reference;
-        $data['sub_total'] =   $dat->sub_total;
-        $data['vat'] =   $dat->vat;
-        $data['dicount'] =   $dat->dicount;
-        $data['total'] =   $dat->total;
-        $data['currency_id'] =   $dat->currency_id;
-        $data['amount_tax'] =   $dat->amount_tax;
-        $items = array();
-        foreach($dat->items as $item){
-            $temp['item_id']        =   $item->id;
-            $temp['description']    =   $item->description;
-            $temp['quantity']       =   $item->quantity;
-            $temp['unit_price']     =   $item->unit_price;
-            $temp['discount']       =   $item->discount;
-            $temp['account_id']     =   $item->account_id;
-            $temp['amount']         =   $item->amount;
+        if($id!=0){
+            $dat=   Invoice::findOrFail($id);
+            $data['id'] =   $dat->id;
+            $data['contact_id'] =   $dat->contact_id;
+            $data['date'] =   $dat->date;
+            $data['estimated_date'] =   $dat->estimated_date;
+            $data['code'] =   $dat->code;
+            $data['reference'] =   $dat->reference;
+            $data['sub_total'] =   $dat->sub_total;
+            $data['vat'] =   $dat->vat;
+            $data['dicount'] =   $dat->dicount;
+            $data['total'] =   $dat->total;
+            $data['currency_id'] =   $dat->currency_id;
+            $data['amount_tax'] =   $dat->amount_tax;
+            $items = array();
+            foreach($dat->items as $item){
+                $temp['item_id']        =   $item->id;
+                $temp['item_name']      =   $item->name;
+                $temp['description']    =   $item->description;
+                $temp['quantity']       =   $item->quantity;
+                $temp['unit_price']     =   $item->unit_price;
+                $temp['discount']       =   $item->discount;
+                $temp['account_id']     =   $item->account_id;
+                $temp['amount']         =   $item->amount;
+                
+                $Tax    =   Taxes::find($item->taxes_id);
+                $temp['tax_id'] =   $Tax->name;
+                $temp['tax_rate'] =   $Tax->total_tax_rate;
+                $amount = $item->unit_price*$item->quantity;
+                $discount = $amount*$item->discount/100;
+                $taxableAmount = $amount-$discount;
+                $tax1 = $taxableAmount*$Tax->total_tax_rate/100;
+                $temp['tax'] =  $tax1;
+
+
+                $items[]=$temp;
+            }
+            $data['items']      =   $items;
+        }else{
             
-            $Tax    =   Taxes::find($item->taxes_id);
-            $temp['tax_id'] =   $Tax->name;
-            $temp['tax_rate'] =   $Tax->total_tax_rate;
-            $amount = $item->unit_price*$item->quantity;
-            $discount = $amount*$item->discount/100;
-            $taxableAmount = $amount-$discount;
-            $tax1 = $taxableAmount*$Tax->total_tax_rate/100;
-            $temp['tax'] =  $tax1;
-
-
-            $items[]=$temp;
+            $data['items']      =  [];
         }
-        $data['items']      =   $items;
         $itemList           =   Item::where([['status', '=', '1'],['user_id','=','1']])->get();//Auth::user()->id
         $itemLi   =   array();
         foreach($itemList as $iteml){
@@ -69,7 +78,7 @@ class InvoiceController extends Controller
             $temp2['account_id']    =   $iteml->sell_account_id;
 
             $Tax    =   Taxes::find($iteml->sell_tax_id);
-            $temp2['tax_id'] =   $Tax->name;
+            $temp2['tax_id'] =   $Tax->id;
             $temp2['tax_rate'] =   $Tax->total_tax_rate;
 
             $amount = $iteml->sell_unit_price*$quantity;
@@ -82,6 +91,8 @@ class InvoiceController extends Controller
             $itemLi[]=$temp2;
         }
         $data['ItemList']   =   $itemLi;
+        $data['taxes']      =   Taxes::all();
+        $data['accounts']   =   Account::all();
         return new InvoiceResource($data);
     }
 
@@ -100,11 +111,11 @@ class InvoiceController extends Controller
 
     public function save($id, Request $request)
     {
-        $requestData    =   json_decode($request->get('data'));
-        
         echo '<pre>';
-        print_r($requestData);
+        echo $id;
+        dd($request->get('data'));
         die;
+        
         $invoice = Invoice::findOrFail($id);
        
         $invoice->save();

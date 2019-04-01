@@ -6925,7 +6925,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, ".test{\r\n    text-align: end;\r\n    padding-top: 25px;\r\n    font-size: 1.2rem;\r\n}\r\n.w200{width: 200px;}\r\n.lablef{float:left;width:20%}\r\n.fr{float:right}\r\n.mtb{margin-top: 2%; margin-bottom: 2%;}", ""]);
+exports.push([module.i, ".test{\r\n    text-align: end;\r\n    padding-top: 25px;\r\n    font-size: 1.2rem;\r\n}\r\n.w200{width: 200px;}\r\n.lablef{float:left;width:20%}\r\n.fr{float:right}\r\n.mtb{margin-top: 2%; margin-bottom: 2%;}\r\nselect{width: 150px;}", ""]);
 
 // exports
 
@@ -78903,6 +78903,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/es/index.js");
 /* harmony import */ var _components_Invoice__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/Invoice */ "./resources/js/components/Invoice.js");
 /* harmony import */ var _components_Dashboard__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/Dashboard */ "./resources/js/components/Dashboard.js");
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
 
 
 
@@ -78918,8 +78920,15 @@ function App() {
     path: "/",
     component: _components_Dashboard__WEBPACK_IMPORTED_MODULE_4__["default"]
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], {
-    path: "/invoice",
+    path: "/invoice/:id",
     component: _components_Invoice__WEBPACK_IMPORTED_MODULE_3__["default"]
+  }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Route"], {
+    path: "/purchase",
+    render: function render(props) {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Invoice__WEBPACK_IMPORTED_MODULE_3__["default"], _extends({}, props, {
+        type: "purchase"
+      }));
+    }
   }));
 }
 
@@ -79068,6 +79077,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_datepicker_dist_react_datepicker_css__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_datepicker_dist_react_datepicker_css__WEBPACK_IMPORTED_MODULE_4__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -79096,15 +79107,16 @@ function (_Component) {
   _inherits(invoice, _Component);
 
   function invoice() {
-    var _this;
+    var _this2;
 
     _classCallCheck(this, invoice);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(invoice).call(this));
-    _this.state = {
+    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(invoice).call(this));
+    _this2.state = {
       data: {
         items: [{
           "item_id": '',
+          "item_name": '',
           "description": "",
           "quantity": "",
           "unit_price": "",
@@ -79126,21 +79138,26 @@ function (_Component) {
         dicount: 0,
         total: 0,
         currency_id: "",
-        amount_tax: ""
+        amount_tax: "",
+        ItemList: [],
+        taxes: [],
+        accounts: []
       }
     };
-    _this.addRow = _this.addRow.bind(_assertThisInitialized(_this));
-    _this.handleDateChange = _this.handleDateChange.bind(_assertThisInitialized(_this));
-    _this.handleHistoryClick = _this.handleHistoryClick.bind(_assertThisInitialized(_this));
-    return _this;
+    _this2.addRow = _this2.addRow.bind(_assertThisInitialized(_this2));
+    _this2.handleDateChange = _this2.handleDateChange.bind(_assertThisInitialized(_this2));
+    _this2.changeContact = _this2.changeContact.bind(_assertThisInitialized(_this2));
+    _this2.saveAddress = _this2.saveAddress.bind(_assertThisInitialized(_this2));
+    return _this2;
   }
 
   _createClass(invoice, [{
     key: "componentDidMount",
     value: function componentDidMount() {
-      var _this2 = this;
+      var _this3 = this;
 
-      axios.get('http://127.0.0.1:8000/api/invoices/1', {
+      var id = this.props.match.params.id ? this.props.match.params.id : 0;
+      axios.get('http://127.0.0.1:8000/api/invoices/' + id, {
         headers: {
           'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjMyMjdjMmQ4MDNkN2UxZTZhZTQ0YTAwMzk3ZjkwMjQ1MGQ4ZTI0Yzg5ZmM3NDVhOTEyMjcxNGQ0NzI1MzY2NDcwZTY5YzkzZDQ0YWMwYzg0In0.eyJhdWQiOiIyIiwianRpIjoiMzIyN2MyZDgwM2Q3ZTFlNmFlNDRhMDAzOTdmOTAyNDUwZDhlMjRjODlmYzc0NWE5MTIyNzE0ZDQ3MjUzNjY0NzBlNjljOTNkNDRhYzBjODQiLCJpYXQiOjE1NTI2NDA1NTMsIm5iZiI6MTU1MjY0MDU1MywiZXhwIjoxNTUzOTM2NTUyLCJzdWIiOiI5MSIsInNjb3BlcyI6W119.b8KQU7gcN0zuDo_G5roYTP0WoysJVMB5zSuNSJQtgQ9DCebvSdu3Zm0KgwyCjqsiv_3UWec_zFB9R2IGcL1i2x-6j7lQeth4FV_yqyLsGzquD4JdElpabhghRlpFsZfZFHkVtqTyUgthweXjtdAkjoU_ORqKp_8K_2D3UGQ8x_Rm_dN1iVFF5URd37VKzgVsYCOugMP3YnWx62NNZHBG8XEO2geyZV5uU70Kz6TFiVwoD8QrVaZA7-H_cGf1kyJ8U_1DQ-g7p0y4pDM0lK_Hj_RwCqVGIMl2YvFNhwP4O0hDuCR0JViwLDkGn4UAu73ME3to8QxhESVulORJyptPKsa5shY3hizBjT-ZpO5hMzzx6sTnk4LkrfUzSYrTUu2LnkXDfw2RDznWYXCxiyU65YJPtUEuG7OJ3Yt8qrRsn3CHSdgyM3A4FvbI7z0MiktzaGZfDWs7oen7WlpE_UJn73P-4Cjp97tWa3ExqwStvtN9pmV7FmrH3G5DQW_P3bqMzzLV9Y1PIHOauCM_NyW-eUjImpVrhQHZ8ZCFw6k9BuyXc6-BF74CosIW277GzzMHtBu6dZ0VBDrzS0ZJrVPAQUtFlrPEZZd1K8k2MPr4Bp-pFxHh4RcwkUvFhkv1XbapjEltWYGcpJZfvs9MYV9EWC_6RhOnr4M-Sjv-Mb8ihjI',
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -79161,25 +79178,52 @@ function (_Component) {
           total: result.data.total,
           currency_id: result.data.currency_id,
           amount_tax: result.data.amount_tax,
-          ItemList: result.data.ItemList
+          ItemList: result.data.ItemList,
+          taxes: result.data.taxes,
+          accounts: result.data.accounts
         };
 
-        _this2.setState({
+        _this3.setState({
           data: data
         });
-
-        console.log(data);
       }).catch(function (error) {
         console.log(error);
       });
     }
   }, {
+    key: "saveAddress",
+    value: function saveAddress(event) {
+      event.preventDefault();
+      axios.post('http://127.0.0.1:8000/api/address', {
+        headers: {
+          'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjMyMjdjMmQ4MDNkN2UxZTZhZTQ0YTAwMzk3ZjkwMjQ1MGQ4ZTI0Yzg5ZmM3NDVhOTEyMjcxNGQ0NzI1MzY2NDcwZTY5YzkzZDQ0YWMwYzg0In0.eyJhdWQiOiIyIiwianRpIjoiMzIyN2MyZDgwM2Q3ZTFlNmFlNDRhMDAzOTdmOTAyNDUwZDhlMjRjODlmYzc0NWE5MTIyNzE0ZDQ3MjUzNjY0NzBlNjljOTNkNDRhYzBjODQiLCJpYXQiOjE1NTI2NDA1NTMsIm5iZiI6MTU1MjY0MDU1MywiZXhwIjoxNTUzOTM2NTUyLCJzdWIiOiI5MSIsInNjb3BlcyI6W119.b8KQU7gcN0zuDo_G5roYTP0WoysJVMB5zSuNSJQtgQ9DCebvSdu3Zm0KgwyCjqsiv_3UWec_zFB9R2IGcL1i2x-6j7lQeth4FV_yqyLsGzquD4JdElpabhghRlpFsZfZFHkVtqTyUgthweXjtdAkjoU_ORqKp_8K_2D3UGQ8x_Rm_dN1iVFF5URd37VKzgVsYCOugMP3YnWx62NNZHBG8XEO2geyZV5uU70Kz6TFiVwoD8QrVaZA7-H_cGf1kyJ8U_1DQ-g7p0y4pDM0lK_Hj_RwCqVGIMl2YvFNhwP4O0hDuCR0JViwLDkGn4UAu73ME3to8QxhESVulORJyptPKsa5shY3hizBjT-ZpO5hMzzx6sTnk4LkrfUzSYrTUu2LnkXDfw2RDznWYXCxiyU65YJPtUEuG7OJ3Yt8qrRsn3CHSdgyM3A4FvbI7z0MiktzaGZfDWs7oen7WlpE_UJn73P-4Cjp97tWa3ExqwStvtN9pmV7FmrH3G5DQW_P3bqMzzLV9Y1PIHOauCM_NyW-eUjImpVrhQHZ8ZCFw6k9BuyXc6-BF74CosIW277GzzMHtBu6dZ0VBDrzS0ZJrVPAQUtFlrPEZZd1K8k2MPr4Bp-pFxHh4RcwkUvFhkv1XbapjEltWYGcpJZfvs9MYV9EWC_6RhOnr4M-Sjv-Mb8ihjI',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+          address: _this.ref.address,
+          address1: _this.ref.attention,
+          address2: _this.ref.address2,
+          city: _this.ref.city,
+          state: _this.ref.state,
+          postal_code: _this.ref.postal_code,
+          country: _this.ref.country
+        }
+      }).then(function (response) {
+        console.log(response);
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+  }, {
+    key: "changeContact",
+    value: function changeContact() {
+      console.log('in contact changeContact');
+    }
+  }, {
     key: "handleDateChange",
-    value: function handleDateChange(date) {
-      console.log(this); //        console.log(props);
-
+    value: function handleDateChange(date, type) {
       var data1 = this.state.data;
-      if (this.name = 'date') data1.date = date;else data1.estimated_date = date;
+      if (type == 'd') data1.date = date;else data1.estimated_date = date;
       this.setState({
         data: data1
       });
@@ -79190,6 +79234,7 @@ function (_Component) {
       var data1 = this.state.data;
       data1.items = this.state.data.items.concat({
         "item_id": "",
+        "item_name": "",
         "description": "",
         "quantity": "",
         "unit_price": "",
@@ -79250,11 +79295,28 @@ function (_Component) {
     key: "saveData",
     value: function saveData() {
       axios.post('http://127.0.0.1:8000/api/invoices/1/save', {
+        params: {
+          data: {
+            "items": this.state.data.items,
+            'id': this.state.data.id,
+            'contact_id': this.state.data.contact_id,
+            'date': this.state.data.date,
+            'estimated_date': this.state.data.estimated_date,
+            'code': this.state.data.code,
+            'reference': this.state.data.reference,
+            'sub_total': this.state.data.sub_total,
+            'vat': this.state.data.vat,
+            'dicount': this.state.data.dicount,
+            'total': this.state.data.total,
+            'currency_id': this.state.data.currency_id,
+            'amount_tax': this.state.data.amount_tax
+          }
+        }
+      }, {
         headers: {
           'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjMyMjdjMmQ4MDNkN2UxZTZhZTQ0YTAwMzk3ZjkwMjQ1MGQ4ZTI0Yzg5ZmM3NDVhOTEyMjcxNGQ0NzI1MzY2NDcwZTY5YzkzZDQ0YWMwYzg0In0.eyJhdWQiOiIyIiwianRpIjoiMzIyN2MyZDgwM2Q3ZTFlNmFlNDRhMDAzOTdmOTAyNDUwZDhlMjRjODlmYzc0NWE5MTIyNzE0ZDQ3MjUzNjY0NzBlNjljOTNkNDRhYzBjODQiLCJpYXQiOjE1NTI2NDA1NTMsIm5iZiI6MTU1MjY0MDU1MywiZXhwIjoxNTUzOTM2NTUyLCJzdWIiOiI5MSIsInNjb3BlcyI6W119.b8KQU7gcN0zuDo_G5roYTP0WoysJVMB5zSuNSJQtgQ9DCebvSdu3Zm0KgwyCjqsiv_3UWec_zFB9R2IGcL1i2x-6j7lQeth4FV_yqyLsGzquD4JdElpabhghRlpFsZfZFHkVtqTyUgthweXjtdAkjoU_ORqKp_8K_2D3UGQ8x_Rm_dN1iVFF5URd37VKzgVsYCOugMP3YnWx62NNZHBG8XEO2geyZV5uU70Kz6TFiVwoD8QrVaZA7-H_cGf1kyJ8U_1DQ-g7p0y4pDM0lK_Hj_RwCqVGIMl2YvFNhwP4O0hDuCR0JViwLDkGn4UAu73ME3to8QxhESVulORJyptPKsa5shY3hizBjT-ZpO5hMzzx6sTnk4LkrfUzSYrTUu2LnkXDfw2RDznWYXCxiyU65YJPtUEuG7OJ3Yt8qrRsn3CHSdgyM3A4FvbI7z0MiktzaGZfDWs7oen7WlpE_UJn73P-4Cjp97tWa3ExqwStvtN9pmV7FmrH3G5DQW_P3bqMzzLV9Y1PIHOauCM_NyW-eUjImpVrhQHZ8ZCFw6k9BuyXc6-BF74CosIW277GzzMHtBu6dZ0VBDrzS0ZJrVPAQUtFlrPEZZd1K8k2MPr4Bp-pFxHh4RcwkUvFhkv1XbapjEltWYGcpJZfvs9MYV9EWC_6RhOnr4M-Sjv-Mb8ihjI',
           'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        data: this.state.data
+        }
       }).then(function (response) {
         console.log(response);
       }).catch(function (error) {
@@ -79262,9 +79324,24 @@ function (_Component) {
       });
     }
   }, {
-    key: "handleHistoryClick",
-    value: function handleHistoryClick(val) {
-      console.log(val.type);
+    key: "itemTaxChange",
+    value: function itemTaxChange(s, id) {
+      var data1 = this.state.data;
+      data1.items[id].tax_id = s;
+      data1.items[id].tax_rate = data1.taxes[s - 1].total_tax_rate;
+      this.setState({
+        data: data1
+      });
+      this.calculator(id);
+    }
+  }, {
+    key: "itemAccountChange",
+    value: function itemAccountChange(s, id) {
+      var data1 = this.state.data;
+      data1.items[id].account_id = s;
+      this.setState({
+        data: data1
+      });
     }
   }, {
     key: "itemAdd",
@@ -79273,6 +79350,7 @@ function (_Component) {
 
       if (data1.items[id].item_id != selection.id) {
         data1.items[id].item_id = selection.id;
+        data1.items[id].item_name = selection.name;
         data1.items[id].description = selection.description;
         data1.items[id].unit_price = selection.unit_price;
         data1.items[id].discount = selection.discount;
@@ -79287,15 +79365,18 @@ function (_Component) {
         });
         this.calculator(id);
       }
-
-      console.log(data1);
+    }
+  }, {
+    key: "changeData",
+    value: function changeData() {
+      console.log('fdd');
     }
   }, {
     key: "handleChange",
     value: function handleChange(e) {
       var curent = e.target.innerHTML;
 
-      if (curent != e.target.defaultValue) {
+      if (curent != e.target.value) {
         var data1 = this.state.data;
         if (e.target.lang == 'discount') data1.items[e.target.id].discount = curent;else if (e.target.lang == 'quantity') data1.items[e.target.id].quantity = curent;else if (e.target.lang == 'unit_price') data1.items[e.target.id].unit_price = curent;
         this.setState({
@@ -79307,13 +79388,15 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "content-wrapper"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "content-body"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", _defineProperty({
+        action: "post"
+      }, "action", "/user/save"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "container in-border"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
@@ -79326,7 +79409,7 @@ function (_Component) {
         name: "contact_id",
         value: this.state.data.contact_id,
         onChange: function onChange() {
-          return alert();
+          return _this4.changeContact;
         },
         className: "form-control"
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -79335,8 +79418,8 @@ function (_Component) {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Date"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_3__["default"], {
         selected: this.state.data.date,
-        onChange: function onChange(props) {
-          return _this3.handleDateChange(_this3.state.data.date, 'date');
+        onChange: function onChange(date) {
+          return _this4.handleDateChange(date, 'd');
         },
         className: "form-control datepicker",
         dateFormat: "yyyy-MM-dd",
@@ -79347,8 +79430,8 @@ function (_Component) {
         className: "form-group"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, "Due Date"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_datepicker__WEBPACK_IMPORTED_MODULE_3__["default"], {
         selected: this.state.data.estimated_date,
-        onChange: function onChange() {
-          return _this3.handleDateChange.bind(_this3);
+        onChange: function onChange(date) {
+          return _this4.handleDateChange(date, 'e');
         },
         className: "form-control datepicker",
         dateFormat: "yyyy-MM-dd",
@@ -79362,7 +79445,7 @@ function (_Component) {
         name: "code",
         value: this.state.data.code,
         onChange: function onChange() {
-          return alert();
+          return _this4.changeData;
         },
         className: "form-control"
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -79374,7 +79457,7 @@ function (_Component) {
         name: "reference",
         value: this.state.data.reference,
         onChange: function onChange() {
-          return alert();
+          return _this4.changeData;
         },
         className: "form-control"
       }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -79393,7 +79476,7 @@ function (_Component) {
         name: "currency_id",
         value: this.state.data.currency_id,
         onChange: function onChange() {
-          return alert();
+          return _this4.changeData;
         },
         className: "form-control w200"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
@@ -79408,7 +79491,7 @@ function (_Component) {
         name: "amount_tax",
         className: "form-control w200",
         onChange: function onChange() {
-          return alert();
+          return _this4.changeData;
         },
         value: this.state.data.amount_tax
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
@@ -79451,19 +79534,24 @@ function (_Component) {
           key: i,
           id: i,
           data: person,
-          items: _this3.state.data.ItemList,
+          items: _this4.state.data.ItemList,
+          taxes: _this4.state.data.taxes,
+          accounts: _this4.state.data.accounts,
           delRow: function delRow(val) {
-            return _this3.removeRow(val);
+            return _this4.removeRow(val);
           },
           html: person.discount,
-          handleHistoryClick: function handleHistoryClick(selection) {
-            return _this3.handleHistoryClick(selection);
-          },
           emitChangeItem: function emitChangeItem(selection) {
-            return _this3.itemAdd(selection, i);
+            return _this4.itemAdd(selection, i);
+          },
+          taxChange: function taxChange(selection) {
+            return _this4.itemTaxChange(selection, i);
+          },
+          accountChange: function accountChange(selection) {
+            return _this4.itemAccountChange(selection, i);
           },
           emitChange: function emitChange(ev) {
-            return _this3.handleChange(ev);
+            return _this4.handleChange(ev);
           }
         });
       })))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -79499,7 +79587,7 @@ function (_Component) {
         type: "hidden",
         value: this.state.data.sub_total,
         onChange: function onChange() {
-          return alert();
+          return _this4.changeData;
         },
         name: "sub_total"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, this.state.data.sub_total))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -79512,7 +79600,7 @@ function (_Component) {
         type: "hidden",
         value: this.state.data.vat,
         onChange: function onChange() {
-          return alert();
+          return _this4.changeData;
         },
         name: "vat"
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, this.state.data.vat))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -79525,10 +79613,24 @@ function (_Component) {
         type: "hidden",
         value: this.state.data.total,
         onChange: function onChange() {
-          return alert();
+          return _this4.changeData;
         },
         name: "total"
-      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, this.state.data.total))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, this.state.data.total))))), this.props.type == 'purchase' ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-12"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "dropdown"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "hidden",
+        value: "Purchase"
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "btn btn-primary",
+        "data-toggle": "modal",
+        "data-target": "#AddAddress"
+      }, "Address")))) : '', react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "row"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "col-md-6"
@@ -79537,15 +79639,15 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
         className: "btn btn-primary btn-primary2 dropdown-toggle",
-        onClick: function onClick() {
-          return _this3.saveData();
-        },
         "data-toggle": "dropdown"
       }, "Save"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "dropdown-menu"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         className: "dropdown-item",
-        href: "new-html"
+        onClick: function onClick() {
+          return _this4.saveData();
+        },
+        href: "javaScript:void(0);"
       }, " Save as draft"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("a", {
         className: "dropdown-item",
         href: "#"
@@ -79567,7 +79669,144 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
         type: "button",
         className: "btn btn-danger btn-primary2"
-      }, "Cancel")))))));
+      }, "Cancel")))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal fade",
+        id: "AddAddress",
+        tabIndex: "-1",
+        role: "dialog",
+        "aria-labelledby": "exampleModalLabel1",
+        "aria-hidden": "true"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal-dialog",
+        role: "document"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal-content"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", {
+        className: "contact-form"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
+        action: "#"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal-header"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
+        className: "modal-title",
+        id: "exampleModalLabel1"
+      }, "Address"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "close",
+        "data-dismiss": "modal",
+        "aria-label": "Close"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        "aria-hidden": "true"
+      }, "\xD7"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal-body"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "col-md-3 label-control",
+        htmlFor: "projectinput3"
+      }, "Street Address"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-9 mx-auto"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "text",
+        id: "projectinput3",
+        className: "form-control",
+        placeholder: "Find Address",
+        name: "address"
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "col-md-3 label-control",
+        htmlFor: "projectinput3"
+      }, "\xA0"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-9 mx-auto"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "text",
+        id: "projectinput3",
+        className: "form-control",
+        placeholder: "Attention",
+        name: "attention"
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "col-md-3 label-control",
+        htmlFor: "projectinput3"
+      }, "\xA0"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-9 mx-auto"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+        name: "address2",
+        className: "form-control",
+        rows: "5"
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "col-md-3 label-control",
+        htmlFor: "projectinput3"
+      }, "\xA0"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-9 mx-auto"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "text",
+        id: "projectinput3",
+        className: "form-control",
+        placeholder: "City/Town",
+        name: "city"
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "col-md-3 label-control",
+        htmlFor: "projectinput3"
+      }, "\xA0"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-5 mx-auto"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "text",
+        id: "projectinput3",
+        className: "form-control",
+        placeholder: "State/Region",
+        name: "state"
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-4 mx-auto"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "text",
+        id: "projectinput3",
+        className: "form-control",
+        placeholder: "Pin Code",
+        name: "postal_code"
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "form-group row"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        className: "col-md-3 label-control",
+        htmlFor: "projectinput3"
+      }, "\xA0"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "col-md-9 mx-auto"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        type: "text",
+        id: "projectinput3",
+        className: "form-control",
+        placeholder: "Country",
+        name: "country"
+      })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "modal-footer"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("fieldset", {
+        className: "form-group position-relative has-icon-left mb-0"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "submit",
+        id: "add-contact-item",
+        className: "btn btn-info add-contact-item mr10",
+        "data-dismiss": "modal",
+        onClick: this.saveAddress
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "la la-paper-plane-o d-lg-none"
+      }), " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "d-none d-lg-block"
+      }, "Add")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        id: "add-contact-item",
+        className: "btn btn-danger add-contact-item",
+        "data-dismiss": "modal"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+        className: "la la-paper-plane-o d-lg-none"
+      }), " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "d-none d-lg-block"
+      }, "Cancel"))))))))));
     }
   }]);
 
@@ -79651,12 +79890,7 @@ function (_React$Component) {
             selectedItem = _ref.selectedItem;
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", _extends({}, getInputProps(), {
           className: "in-drop-box"
-        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", _extends({}, getInputProps(), {
-          className: "add-button",
-          onClick: function onClick() {
-            return _this.props.handleHistoryClick(_this);
-          }
-        }), "+")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", _extends({
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", _extends({
           className: "autoComplete in-drop"
         }, getMenuProps()), isOpen ? _this.props.items.filter(function (item) {
           return !inputValue || item.name.includes(inputValue);
@@ -79681,7 +79915,7 @@ function (_React$Component) {
           __html: this.props.data.description
         },
         lang: "description",
-        defaultValue: this.props.data.description,
+        value: this.props.data.description,
         id: this.props.id
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
         className: "pt-3-half",
@@ -79693,7 +79927,7 @@ function (_React$Component) {
           __html: this.props.data.quantity
         },
         lang: "quantity",
-        defaultValue: this.props.data.quantity,
+        value: this.props.data.quantity,
         id: this.props.id
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
         className: "pt-3-half",
@@ -79705,7 +79939,7 @@ function (_React$Component) {
           __html: this.props.data.unit_price
         },
         lang: "unit_price",
-        defaultValue: this.props.data.unit_price,
+        value: this.props.data.unit_price,
         id: this.props.id
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
         className: "pt-3-half",
@@ -79717,15 +79951,35 @@ function (_React$Component) {
           __html: this.props.data.discount
         },
         lang: "discount",
-        defaultValue: this.props.data.discount,
+        value: this.props.data.discount,
         id: this.props.id
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
         className: "pt-3-half"
-      }, this.props.data.account_id), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        value: this.props.data.account_id,
+        onChange: function onChange(e) {
+          return _this.props.accountChange(e.target.value);
+        }
+      }, this.props.accounts.map(function (account) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+          key: "tax-" + account.id,
+          value: account.id
+        }, account.name);
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
         className: "pt-3-half"
       }, this.props.data.tax_rate), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
         className: "pt-3-half"
-      }, this.props.data.tax), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", {
+        value: this.props.data.tax_id,
+        onChange: function onChange(e) {
+          return _this.props.taxChange(e.target.value);
+        }
+      }, this.props.taxes.map(function (tax) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+          key: "tax-" + tax.id,
+          value: tax.id
+        }, tax.name);
+      }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
         className: "pt-3-half"
       }, this.props.data.amount), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", {
         className: "pt-3-half"

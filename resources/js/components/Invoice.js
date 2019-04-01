@@ -13,6 +13,7 @@ export default class invoice extends Component {
                 items:[
                     {
                         "item_id":'',
+                        "item_name":'',
                         "description":"",
                         "quantity":"",
                         "unit_price":"",
@@ -36,17 +37,24 @@ export default class invoice extends Component {
                 dicount:0,
                 total:0,
                 currency_id:"",
-                amount_tax:""
+                amount_tax:"", 
+                ItemList:[],
+                taxes:[],
+                accounts:[]
                 
             }
         }
+        
         this.addRow = this.addRow.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
-        this.handleHistoryClick= this.handleHistoryClick.bind(this);
+        this.changeContact  =   this.changeContact.bind(this);
+        this.saveAddress = this.saveAddress.bind(this);
     }
 
     componentDidMount () {
-        axios.get('http://127.0.0.1:8000/api/invoices/1',{
+        
+        const id = this.props.match.params.id?this.props.match.params.id:0;
+        axios.get('http://127.0.0.1:8000/api/invoices/'+id,{
             headers: {
                 'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjMyMjdjMmQ4MDNkN2UxZTZhZTQ0YTAwMzk3ZjkwMjQ1MGQ4ZTI0Yzg5ZmM3NDVhOTEyMjcxNGQ0NzI1MzY2NDcwZTY5YzkzZDQ0YWMwYzg0In0.eyJhdWQiOiIyIiwianRpIjoiMzIyN2MyZDgwM2Q3ZTFlNmFlNDRhMDAzOTdmOTAyNDUwZDhlMjRjODlmYzc0NWE5MTIyNzE0ZDQ3MjUzNjY0NzBlNjljOTNkNDRhYzBjODQiLCJpYXQiOjE1NTI2NDA1NTMsIm5iZiI6MTU1MjY0MDU1MywiZXhwIjoxNTUzOTM2NTUyLCJzdWIiOiI5MSIsInNjb3BlcyI6W119.b8KQU7gcN0zuDo_G5roYTP0WoysJVMB5zSuNSJQtgQ9DCebvSdu3Zm0KgwyCjqsiv_3UWec_zFB9R2IGcL1i2x-6j7lQeth4FV_yqyLsGzquD4JdElpabhghRlpFsZfZFHkVtqTyUgthweXjtdAkjoU_ORqKp_8K_2D3UGQ8x_Rm_dN1iVFF5URd37VKzgVsYCOugMP3YnWx62NNZHBG8XEO2geyZV5uU70Kz6TFiVwoD8QrVaZA7-H_cGf1kyJ8U_1DQ-g7p0y4pDM0lK_Hj_RwCqVGIMl2YvFNhwP4O0hDuCR0JViwLDkGn4UAu73ME3to8QxhESVulORJyptPKsa5shY3hizBjT-ZpO5hMzzx6sTnk4LkrfUzSYrTUu2LnkXDfw2RDznWYXCxiyU65YJPtUEuG7OJ3Yt8qrRsn3CHSdgyM3A4FvbI7z0MiktzaGZfDWs7oen7WlpE_UJn73P-4Cjp97tWa3ExqwStvtN9pmV7FmrH3G5DQW_P3bqMzzLV9Y1PIHOauCM_NyW-eUjImpVrhQHZ8ZCFw6k9BuyXc6-BF74CosIW277GzzMHtBu6dZ0VBDrzS0ZJrVPAQUtFlrPEZZd1K8k2MPr4Bp-pFxHh4RcwkUvFhkv1XbapjEltWYGcpJZfvs9MYV9EWC_6RhOnr4M-Sjv-Mb8ihjI', 
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -54,48 +62,74 @@ export default class invoice extends Component {
         }).then(response => {
             var result = response.data;
             var data= {
-                items:result.data.items,
-                id:result.data.id,
-                contact_id:result.data.contact_id,
-                date:new Date(result.data.date),
-                estimated_date:new Date(result.data.estimated_date),
-                code:result.data.code,
-                reference:result.data.reference,
-                sub_total:result.data.sub_total,
-                vat:result.data.vat,
-                dicount:result.data.dicount,
-                total:result.data.total,
-                currency_id:result.data.currency_id,
-                amount_tax:result.data.amount_tax,
-                ItemList:result.data.ItemList
-            
-            }
-            
+                    items:result.data.items,
+                    id:result.data.id,
+                    contact_id:result.data.contact_id,
+                    date:new Date(result.data.date),
+                    estimated_date:new Date(result.data.estimated_date),
+                    code:result.data.code,
+                    reference:result.data.reference,
+                    sub_total:result.data.sub_total,
+                    vat:result.data.vat,
+                    dicount:result.data.dicount,
+                    total:result.data.total,
+                    currency_id:result.data.currency_id,
+                    amount_tax:result.data.amount_tax,
+                    ItemList:result.data.ItemList,
+                    taxes:result.data.taxes,
+                    accounts:result.data.accounts
+                }
+                
             this.setState({
                 data: data
             })
-            console.log(data);
         }).catch((error) => {
             console.log(error);
         });
     }
 
-    handleDateChange(date) {
-        console.log(this);
-//        console.log(props);
+    saveAddress(event){
+        event.preventDefault();
+        axios.post('http://127.0.0.1:8000/api/address',{
+            headers: {
+                'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjMyMjdjMmQ4MDNkN2UxZTZhZTQ0YTAwMzk3ZjkwMjQ1MGQ4ZTI0Yzg5ZmM3NDVhOTEyMjcxNGQ0NzI1MzY2NDcwZTY5YzkzZDQ0YWMwYzg0In0.eyJhdWQiOiIyIiwianRpIjoiMzIyN2MyZDgwM2Q3ZTFlNmFlNDRhMDAzOTdmOTAyNDUwZDhlMjRjODlmYzc0NWE5MTIyNzE0ZDQ3MjUzNjY0NzBlNjljOTNkNDRhYzBjODQiLCJpYXQiOjE1NTI2NDA1NTMsIm5iZiI6MTU1MjY0MDU1MywiZXhwIjoxNTUzOTM2NTUyLCJzdWIiOiI5MSIsInNjb3BlcyI6W119.b8KQU7gcN0zuDo_G5roYTP0WoysJVMB5zSuNSJQtgQ9DCebvSdu3Zm0KgwyCjqsiv_3UWec_zFB9R2IGcL1i2x-6j7lQeth4FV_yqyLsGzquD4JdElpabhghRlpFsZfZFHkVtqTyUgthweXjtdAkjoU_ORqKp_8K_2D3UGQ8x_Rm_dN1iVFF5URd37VKzgVsYCOugMP3YnWx62NNZHBG8XEO2geyZV5uU70Kz6TFiVwoD8QrVaZA7-H_cGf1kyJ8U_1DQ-g7p0y4pDM0lK_Hj_RwCqVGIMl2YvFNhwP4O0hDuCR0JViwLDkGn4UAu73ME3to8QxhESVulORJyptPKsa5shY3hizBjT-ZpO5hMzzx6sTnk4LkrfUzSYrTUu2LnkXDfw2RDznWYXCxiyU65YJPtUEuG7OJ3Yt8qrRsn3CHSdgyM3A4FvbI7z0MiktzaGZfDWs7oen7WlpE_UJn73P-4Cjp97tWa3ExqwStvtN9pmV7FmrH3G5DQW_P3bqMzzLV9Y1PIHOauCM_NyW-eUjImpVrhQHZ8ZCFw6k9BuyXc6-BF74CosIW277GzzMHtBu6dZ0VBDrzS0ZJrVPAQUtFlrPEZZd1K8k2MPr4Bp-pFxHh4RcwkUvFhkv1XbapjEltWYGcpJZfvs9MYV9EWC_6RhOnr4M-Sjv-Mb8ihjI', 
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            data: {
+                address: _this.ref.address,
+                address1: _this.ref.attention,
+                address2: _this.ref.address2,
+                city: _this.ref.city,
+                state: _this.ref.state,
+                postal_code: _this.ref.postal_code,
+                country: _this.ref.country
+            }
+           
+        }).then(response => {
+            console.log(response);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
+    changeContact(){
+        console.log('in contact changeContact');
+    }
+
+    handleDateChange(date,type) {
         var data1 = this.state.data;
-        if(this.name = 'date')
+        if(type == 'd')
             data1.date = date;
         else
             data1.estimated_date = date;
-        this.setState({
-            data: data1
-        })
+
+        this.setState({data: data1})
     }
     addRow(){
         var data1 = this.state.data;
         data1.items=this.state.data.items.concat({
             "item_id":"",
+            "item_name":"",
             "description":"",
             "quantity":"",
             "unit_price":"",
@@ -142,13 +176,31 @@ export default class invoice extends Component {
     }
 
     saveData(){
-        axios.post('http://127.0.0.1:8000/api/invoices/1/save',{ 
+        axios.post('http://127.0.0.1:8000/api/invoices/1/save',
+        {
+            
+            params: {data:{
+                "items":this.state.data.items,
+                'id':this.state.data.id,
+                'contact_id':this.state.data.contact_id,
+                'date':this.state.data.date,
+                'estimated_date':this.state.data.estimated_date,
+                'code':this.state.data.code,
+                'reference':this.state.data.reference,
+                'sub_total':this.state.data.sub_total,
+                'vat':this.state.data.vat,
+                'dicount':this.state.data.dicount,
+                'total':this.state.data.total,
+                'currency_id':this.state.data.currency_id,
+                'amount_tax':this.state.data.amount_tax
+            }
+        }
+    },
+        {   
             headers: {
-                'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjMyMjdjMmQ4MDNkN2UxZTZhZTQ0YTAwMzk3ZjkwMjQ1MGQ4ZTI0Yzg5ZmM3NDVhOTEyMjcxNGQ0NzI1MzY2NDcwZTY5YzkzZDQ0YWMwYzg0In0.eyJhdWQiOiIyIiwianRpIjoiMzIyN2MyZDgwM2Q3ZTFlNmFlNDRhMDAzOTdmOTAyNDUwZDhlMjRjODlmYzc0NWE5MTIyNzE0ZDQ3MjUzNjY0NzBlNjljOTNkNDRhYzBjODQiLCJpYXQiOjE1NTI2NDA1NTMsIm5iZiI6MTU1MjY0MDU1MywiZXhwIjoxNTUzOTM2NTUyLCJzdWIiOiI5MSIsInNjb3BlcyI6W119.b8KQU7gcN0zuDo_G5roYTP0WoysJVMB5zSuNSJQtgQ9DCebvSdu3Zm0KgwyCjqsiv_3UWec_zFB9R2IGcL1i2x-6j7lQeth4FV_yqyLsGzquD4JdElpabhghRlpFsZfZFHkVtqTyUgthweXjtdAkjoU_ORqKp_8K_2D3UGQ8x_Rm_dN1iVFF5URd37VKzgVsYCOugMP3YnWx62NNZHBG8XEO2geyZV5uU70Kz6TFiVwoD8QrVaZA7-H_cGf1kyJ8U_1DQ-g7p0y4pDM0lK_Hj_RwCqVGIMl2YvFNhwP4O0hDuCR0JViwLDkGn4UAu73ME3to8QxhESVulORJyptPKsa5shY3hizBjT-ZpO5hMzzx6sTnk4LkrfUzSYrTUu2LnkXDfw2RDznWYXCxiyU65YJPtUEuG7OJ3Yt8qrRsn3CHSdgyM3A4FvbI7z0MiktzaGZfDWs7oen7WlpE_UJn73P-4Cjp97tWa3ExqwStvtN9pmV7FmrH3G5DQW_P3bqMzzLV9Y1PIHOauCM_NyW-eUjImpVrhQHZ8ZCFw6k9BuyXc6-BF74CosIW277GzzMHtBu6dZ0VBDrzS0ZJrVPAQUtFlrPEZZd1K8k2MPr4Bp-pFxHh4RcwkUvFhkv1XbapjEltWYGcpJZfvs9MYV9EWC_6RhOnr4M-Sjv-Mb8ihjI', 
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            data:this.state.data
-
+            'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjMyMjdjMmQ4MDNkN2UxZTZhZTQ0YTAwMzk3ZjkwMjQ1MGQ4ZTI0Yzg5ZmM3NDVhOTEyMjcxNGQ0NzI1MzY2NDcwZTY5YzkzZDQ0YWMwYzg0In0.eyJhdWQiOiIyIiwianRpIjoiMzIyN2MyZDgwM2Q3ZTFlNmFlNDRhMDAzOTdmOTAyNDUwZDhlMjRjODlmYzc0NWE5MTIyNzE0ZDQ3MjUzNjY0NzBlNjljOTNkNDRhYzBjODQiLCJpYXQiOjE1NTI2NDA1NTMsIm5iZiI6MTU1MjY0MDU1MywiZXhwIjoxNTUzOTM2NTUyLCJzdWIiOiI5MSIsInNjb3BlcyI6W119.b8KQU7gcN0zuDo_G5roYTP0WoysJVMB5zSuNSJQtgQ9DCebvSdu3Zm0KgwyCjqsiv_3UWec_zFB9R2IGcL1i2x-6j7lQeth4FV_yqyLsGzquD4JdElpabhghRlpFsZfZFHkVtqTyUgthweXjtdAkjoU_ORqKp_8K_2D3UGQ8x_Rm_dN1iVFF5URd37VKzgVsYCOugMP3YnWx62NNZHBG8XEO2geyZV5uU70Kz6TFiVwoD8QrVaZA7-H_cGf1kyJ8U_1DQ-g7p0y4pDM0lK_Hj_RwCqVGIMl2YvFNhwP4O0hDuCR0JViwLDkGn4UAu73ME3to8QxhESVulORJyptPKsa5shY3hizBjT-ZpO5hMzzx6sTnk4LkrfUzSYrTUu2LnkXDfw2RDznWYXCxiyU65YJPtUEuG7OJ3Yt8qrRsn3CHSdgyM3A4FvbI7z0MiktzaGZfDWs7oen7WlpE_UJn73P-4Cjp97tWa3ExqwStvtN9pmV7FmrH3G5DQW_P3bqMzzLV9Y1PIHOauCM_NyW-eUjImpVrhQHZ8ZCFw6k9BuyXc6-BF74CosIW277GzzMHtBu6dZ0VBDrzS0ZJrVPAQUtFlrPEZZd1K8k2MPr4Bp-pFxHh4RcwkUvFhkv1XbapjEltWYGcpJZfvs9MYV9EWC_6RhOnr4M-Sjv-Mb8ihjI', 
+            'Content-Type': 'application/x-www-form-urlencoded'
+            }
         }).then(response => {
             console.log(response);
         }).catch((error) => {
@@ -156,14 +208,27 @@ export default class invoice extends Component {
         });
 
     }
-    handleHistoryClick(val)
-    {
-        console.log(val.type);
+
+    itemTaxChange(s,id){
+
+        var data1 = this.state.data;
+        data1.items[id].tax_id  = s;
+        data1.items[id].tax_rate= data1.taxes[s-1].total_tax_rate;
+        this.setState({ data:  data1});
+        this.calculator(id);
     }
+
+    itemAccountChange(s,id){
+        var data1 = this.state.data;
+        data1.items[id].account_id  = s;
+        this.setState({ data:  data1});
+    }
+
     itemAdd(selection,id){
         var data1 = this.state.data;
         if(data1.items[id].item_id != selection.id){
             data1.items[id].item_id=selection.id;
+            data1.items[id].item_name=selection.name;
             data1.items[id].description=selection.description;
             data1.items[id].unit_price=selection.unit_price;
             data1.items[id].discount=selection.discount;
@@ -176,12 +241,14 @@ export default class invoice extends Component {
             this.setState({ data:  data1});
             this.calculator(id);
         }
-        console.log(data1);
-
+    }
+    changeData()
+    {
+        console.log('fdd');
     }
     handleChange(e){
         var curent = e.target.innerHTML;
-        if(curent != e.target.defaultValue){
+        if(curent != e.target.value){
             var data1 = this.state.data;
             if(e.target.lang == 'discount')
                 data1.items[e.target.id].discount=curent;
@@ -197,13 +264,13 @@ export default class invoice extends Component {
         return (
             <div className="content-wrapper">
                 <div className="content-body">
-                    <div>
+                    <form action="post" action="/user/save">
                         <div className="container in-border">
                             <div className="row">
                                 <div className="col-md-2"> 
                                     <div className="form-group ui-widget">
                                         <label >To</label>
-                                        <input type="text" name="contact_id" value={this.state.data.contact_id} onChange={()=>alert()} className="form-control" />
+                                        <input type="text" name="contact_id" value={this.state.data.contact_id} onChange={()=>this.changeContact} className="form-control" />
                                     </div>
                                 </div>                                        
                                 <div className="col-md-2"> 
@@ -211,7 +278,7 @@ export default class invoice extends Component {
                                         <label >Date</label>
                                         <DatePicker
                                             selected={this.state.data.date}
-                                            onChange={(props)=>this.handleDateChange(this.state.data.date,'date')}
+                                            onChange={(date)=>this.handleDateChange(date,'d')}
                                             className="form-control datepicker"
                                             dateFormat="yyyy-MM-dd"
                                             name="date" 
@@ -223,7 +290,7 @@ export default class invoice extends Component {
                                         <label >Due Date</label>
                                         <DatePicker
                                             selected={this.state.data.estimated_date}
-                                            onChange={()=>this.handleDateChange.bind(this)}
+                                            onChange={(date)=>this.handleDateChange(date,'e')}
                                             className="form-control datepicker"
                                             dateFormat="yyyy-MM-dd"
                                             name="estimated_date" 
@@ -233,13 +300,13 @@ export default class invoice extends Component {
                                 <div className="col-md-2"> 
                                     <div className="form-group">
                                         <label >Invoice Code</label>
-                                        <input type="text" name="code" value={this.state.data.code}  onChange={()=>alert()}  className="form-control" />
+                                        <input type="text" name="code" value={this.state.data.code}  onChange={()=>this.changeData}  className="form-control" />
                                     </div> 
                                 </div>  
                                 <div className="col-md-2">
                                     <div className="form-group">
                                         <label >Reference</label>
-                                        <input type="text" name="reference" value={this.state.data.reference}  onChange={()=>alert()}  className="form-control" />
+                                        <input type="text" name="reference" value={this.state.data.reference}  onChange={()=>this.changeData}  className="form-control" />
                                     </div> 
                                 </div>                                        
                                 <div className="col-md-2 ">
@@ -252,14 +319,14 @@ export default class invoice extends Component {
                             <hr />
                             <div className="row">
                                 <div className="col-md-6 col-12">
-                                <select name="currency_id"  value={this.state.data.currency_id}  onChange={()=>alert()}  className="form-control w200" >
+                                <select name="currency_id"  value={this.state.data.currency_id}  onChange={()=>this.changeData}  className="form-control w200" >
                                     <option value="1">GBP British Pound</option>
                                     <option value="1">Add Currency</option>
                                 </select>
                                 </div>
                                 <div className="col-md-6 col-12 fr">
                                     <label className="lablef">Amount are:</label>
-                                    <select name="amount_tax" className="form-control w200"  onChange={()=>alert()}  value={this.state.data.amount_tax} >
+                                    <select name="amount_tax" className="form-control w200"  onChange={()=>this.changeData}  value={this.state.data.amount_tax} >
                                             <option value="Tax Exclusive">Tax Exclusive</option>
                                             <option value="Tax Inclusive">Tax Inclusive</option>
                                             <option value="No Tax">No Tax</option>
@@ -290,14 +357,17 @@ export default class invoice extends Component {
                                             <tbody>
                                                 {this.state.data.items.map((person, i) => 
                                                 <TableRow key = {i} 
-                                                id = {i} 
-                                                data = {person}
-                                                items= {this.state.data.ItemList}
-                                                delRow={(val)=>this.removeRow(val)} 
-                                                html={person.discount}
-                                                handleHistoryClick={(selection)=>this.handleHistoryClick(selection)}
-                                                emitChangeItem={(selection)=>this.itemAdd(selection,i)} 
-                                                emitChange={(ev)=>this.handleChange(ev)}
+                                                    id = {i} 
+                                                    data = {person}
+                                                    items= {this.state.data.ItemList}
+                                                    taxes= {this.state.data.taxes}
+                                                    accounts= {this.state.data.accounts}
+                                                    delRow={(val)=>this.removeRow(val)} 
+                                                    html={person.discount}
+                                                    emitChangeItem={(selection)=>this.itemAdd(selection,i)}
+                                                    taxChange={(selection)=>this.itemTaxChange(selection,i)}
+                                                    accountChange={(selection)=>this.itemAccountChange(selection,i)}
+                                                    emitChange={(ev)=>this.handleChange(ev)}
                                                 />)}
                                             </tbody>
                                         </table>
@@ -322,33 +392,45 @@ export default class invoice extends Component {
                                     <div className="row">
                                         <div className="col-6">Sub total {(this.state.data.discount>0)?'(includes a discount of '+this.state.data.discount+')':''}</div>
                                         <div className="col-6" >
-                                            <input type="hidden" value={this.state.data.sub_total}  onChange={()=>alert()}  name="sub_total" />
+                                            <input type="hidden" value={this.state.data.sub_total}  onChange={()=>this.changeData}  name="sub_total" />
                                             <p >{this.state.data.sub_total}</p>
                                         </div>
                                     </div>
                                     <div className="row">
                                         <div className="col-6">Total VAT</div>
                                         <div className="col-6" >
-                                            <input type="hidden" value={this.state.data.vat}  onChange={()=>alert()}  name="vat" />
+                                            <input type="hidden" value={this.state.data.vat}  onChange={()=>this.changeData}  name="vat" />
                                             <p >{this.state.data.vat}</p>
                                         </div>
                                     </div>
                                     <div className="row in-total">
                                         <div className="col-6">Total</div>
                                         <div className="col-6" >
-                                            <input type="hidden" value={this.state.data.total}  onChange={()=>alert()}  name="total" />
+                                            <input type="hidden" value={this.state.data.total}  onChange={()=>this.changeData}  name="total" />
                                             <p >{this.state.data.total}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            {(this.props.type=='purchase')?
                             
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <div className="dropdown">
+                                        <input type="hidden" value="Purchase" />
+                                        <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#AddAddress">Address</button>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            :''
+                            }
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="dropdown">
-                                        <button type="button" className="btn btn-primary btn-primary2 dropdown-toggle" onClick={()=>this.saveData()} data-toggle="dropdown">Save</button>
+                                        <button type="button" className="btn btn-primary btn-primary2 dropdown-toggle" data-toggle="dropdown">Save</button>
                                         <div className="dropdown-menu">
-                                            <a className="dropdown-item" href="new-html"> Save as draft</a>
+                                            <a className="dropdown-item" onClick={()=>this.saveData()}  href="javaScript:void(0);"> Save as draft</a>
                                             <a className="dropdown-item" href="#"> Save(continue editing)</a>
                                             <a className="dropdown-item" href="#">Save & submit for approval</a>
                                         </div>
@@ -366,7 +448,72 @@ export default class invoice extends Component {
                             </div>
                         
                         </div>
-                    </div>                    
+                    </form>                    
+                </div>
+                <div className="modal fade" id="AddAddress" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <section className="contact-form">
+                                <form action="#" >
+                                    <div className="modal-header">
+                                    <h5 className="modal-title" id="exampleModalLabel1">Address</h5>
+                                    <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    </div>
+                                    <div className="modal-body">
+                                        <div className="form-group row">
+                                            <label className="col-md-3 label-control" htmlFor="projectinput3">Street Address</label>
+                                            <div className="col-md-9 mx-auto">
+                                                <input type="text" id="projectinput3" className="form-control" placeholder="Find Address" name="address" />
+                                            </div>
+                                        </div>
+                                                <div className="form-group row">
+                                                    <label className="col-md-3 label-control" htmlFor="projectinput3">&nbsp;</label>
+                                                    <div className="col-md-9 mx-auto">
+                                                        <input type="text" id="projectinput3" className="form-control" placeholder="Attention" name="attention" />
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <label className="col-md-3 label-control" htmlFor="projectinput3">&nbsp;</label>
+                                                    <div className="col-md-9 mx-auto">
+                                                        <textarea name="address2" className="form-control" rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <label className="col-md-3 label-control" htmlFor="projectinput3">&nbsp;</label>
+                                                    <div className="col-md-9 mx-auto">
+                                                        <input type="text" id="projectinput3" className="form-control" placeholder="City/Town" name="city" />
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <label className="col-md-3 label-control" htmlFor="projectinput3">&nbsp;</label>
+                                                    <div className="col-md-5 mx-auto">
+                                                        <input type="text" id="projectinput3" className="form-control" placeholder="State/Region" name="state"/>
+                                                    </div>
+                                                    <div className="col-md-4 mx-auto">
+                                                        <input type="text" id="projectinput3" className="form-control" placeholder="Pin Code" name="postal_code"/>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <label className="col-md-3 label-control" htmlFor="projectinput3">&nbsp;</label>
+                                                    <div className="col-md-9 mx-auto">
+                                                        <input type="text" id="projectinput3" className="form-control" placeholder="Country" name="country"/>
+                                                    </div>
+                                                </div>
+                                    </div>
+                                    <div className="modal-footer">
+                                    <fieldset className="form-group position-relative has-icon-left mb-0">
+                                        <button type="submit" id="add-contact-item" className="btn btn-info add-contact-item mr10" data-dismiss="modal" onClick={this.saveAddress}><i
+                                            className="la la-paper-plane-o d-lg-none"></i> <span className="d-none d-lg-block" >Add</span></button>
+                                        <button type="button" id="add-contact-item" className="btn btn-danger add-contact-item" data-dismiss="modal"><i
+                                            className="la la-paper-plane-o d-lg-none"></i> <span className="d-none d-lg-block">Cancel</span></button>
+                                    </fieldset>
+                                    </div>
+                                </form>
+                            </section>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

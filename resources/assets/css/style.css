@@ -58,27 +58,12 @@ border-radius: 5px;font-size: 20px; }
     display: inline-flex;
     font-size: 1.1rem;
 }
-.btn-primary2 {
-   
-    width: 180px;
-}
+.btn-primary2 {width: 180px;}
 
-.tbg{background: #fff;
-text-align: center;
-margin-top: 3%;
-display: block;padding-top: 12px;}
-
-.in{ background: #ef3e4a;
-margin: 2%;
-padding: 15px; }
-.in p{ font-size: 1.2rem;
-color: #fff;
-text-align: center; }
-.in-total{    border-top: 1px solid #000;
-    border-bottom: 1px solid #000;
-    font-size: 2rem;
-    font-weight: 600;
-    color: #000;}
-.in-border{ border: 1px solid #0006;
-padding: 24px; }
+.tbg{background: #fff;text-align: center;margin-top: 3%;display: block;padding-top: 12px;}
+.in{ background: #ef3e4a;margin: 2%;padding: 15px; }
+.in p{ font-size: 1.2rem;color: #fff;text-align: center; }
+.in-total{    border-top: 1px solid #000; border-bottom: 1px solid #000;font-size: 2rem;font-weight: 600;color: #000;}
+.in-border{ border: 1px solid #0006;padding: 24px; }
 .btn-pop{    width: 150px;}
+.pt-3-half select{width: 150px;}

@@ -79,9 +79,11 @@
                                 <button class="tablinks" onclick="openCity(event, 'customers')">Customers({{count($customer)}})</button>
                                 <button class="tablinks" onclick="openCity(event, 'Suppliers')">Suppliers({{count($supplier)}})</button>
                                 <button class="tablinks" onclick="openCity(event, 'Employees')">Employees({{count($employee)}})</button>
-                                <button class="tablinks" onclick="openCity(event, 'Archived')">Archived(1)</button>
+                                <button class="tablinks" onclick="openCity(event, 'Archived')">Archived({{count($archived)}})</button>
                                 <div class="tab-new"> New Groups</div>
-                                <button class="tablinks" onclick="openCity(event, 'TestGroup')">Test Group(2)</button>
+                                @foreach($groups as $group)
+                                <button class="tablinks" onclick="openCity(event, 'TestGroup{{$group->id}}')">{{$group->name}}(2)</button>
+                                @endforeach
                                 <div class="tab-new"> Smart Lists</div>
                                 <button class="tablinks" onclick="openCity(event, 'Purchased')">Have Purchased an Item</button>
                                 <button class="tablinks" onclick="openCity(event, 'Outstanding')">Outstanding > 30 days</button>
@@ -164,7 +166,7 @@
                                                     <td class="sorting_1">
                                                     <input type="checkbox" id="defaultCheck" name="example2">
                                                     </td>
-                                                    <td><a href="{{url('/contact')}}" class="text-bold-600">{{$user->contact_name}}</a></td>
+                                                    <td><a href="{{url('/contact',$user->id)}}" class="text-bold-600">{{$user->contact_name}}</a></td>
                                                     <td>{{$user->email}}</td>
                                                     <td>{{$user->last_name}}</td>
                                                     <td>{{$user->phone}}</td>
@@ -249,7 +251,7 @@
                                                     <td class="sorting_1">
                                                     <input type="checkbox" id="defaultCheck" name="example2">
                                                     </td>
-                                                    <td><a href="{{url('/contact')}}" class="text-bold-600">{{$user->contact_name}}</a></td>
+                                                    <td><a href="{{url('/contact',$user->id)}}" class="text-bold-600">{{$user->contact_name}}</a></td>
                                                     <td>{{$user->email}}</td>
                                                     <td>{{$user->last_name}}</td>
                                                     <td>{{$user->phone}}</td>
@@ -334,7 +336,7 @@
                                                     <td class="sorting_1">
                                                     <input type="checkbox" id="defaultCheck" name="example2">
                                                     </td>
-                                                    <td><a href="{{url('/contact')}}" class="text-bold-600">{{$user->contact_name}}</a></td>
+                                                    <td><a href="{{url('/contact',$user->id)}}" class="text-bold-600">{{$user->contact_name}}</a></td>
                                                     <td>{{$user->email}}</td>
                                                     <td>{{$user->last_name}}</td>
                                                     <td>{{$user->phone}}</td>
@@ -419,7 +421,7 @@
                                                     <td class="sorting_1">
                                                     <input type="checkbox" id="defaultCheck" name="example2">
                                                     </td>
-                                                    <td><a href="{{url('/contact')}}" class="text-bold-600">{{$user->contact_name}}</a></td>
+                                                    <td><a href="{{url('/contact',$user->id)}}" class="text-bold-600">{{$user->contact_name}}</a></td>
                                                     <td>{{$user->email}}</td>
                                                     <td>{{$user->last_name}}</td>
                                                     <td>{{$user->phone}}</td>
@@ -431,7 +433,7 @@
                                 </div>
                             </div>
                             <div id="Archived" class="tabcontent">
-                            <div class="row tab-row">
+                                <div class="row tab-row">
                                     <div class="col-md-3">
                                         <nav class="navbar navbar-expand-sm navbar-light bg-faded">
                                             <div class="collapse navbar-collapse" id="nav-content">
@@ -499,12 +501,12 @@
                                                                                     </tr>
                                             </thead>
                                             <tbody>
-                                            @foreach ($supplier as $user)
+                                            @foreach ($archived as $user)
                                                 <tr role="row" class="odd">
                                                     <td class="sorting_1">
                                                     <input type="checkbox" id="defaultCheck" name="example2">
                                                     </td>
-                                                    <td><a href="{{url('/contact')}}" class="text-bold-600">{{$user->contact_name}}</a></td>
+                                                    <td><a href="{{url('/contact',$user->id)}}" class="text-bold-600">{{$user->contact_name}}</a></td>
                                                     <td>{{$user->email}}</td>
                                                     <td>{{$user->last_name}}</td>
                                                     <td>{{$user->phone}}</td>
@@ -515,6 +517,94 @@
                                     </div>
                                 </div>
                             </div>
+
+                            @foreach($groups as $group)
+                            <div id="TestGroup{{$group->id}}" class="tabcontent">
+                                <div class="row tab-row">
+                                    <div class="col-md-3">
+                                        <nav class="navbar navbar-expand-sm navbar-light bg-faded">
+                                            <div class="collapse navbar-collapse" id="nav-content">
+                                                <ul class="navbar-nav">
+                                                    <li class="nav-item dropdown">
+                                                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="Preview" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                                        Options
+                                                        </a>
+                                                        <div class="dropdown-menu" aria-labelledby="Preview">
+                                                            <a class="dropdown-item" href="#">Dropdown Link 1</a>
+                                                            <a class="dropdown-item" href="#">Dropdown Link 2</a>
+                                                            <a class="dropdown-item" href="#">Dropdown Link 3</a>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </nav>
+                                    </div>
+                                    <div class="col-md-1 tab-text">Edit</div>
+                                    <div class="col-md-2 tab-text">1 Item Selected</div>
+                                    <div class="col-md-3 tab-text">
+                                        <form action="#">
+                                            <div class="position-relative">
+                                            <input type="search" id="search-contacts" class="form-control" placeholder="Search contacts...">
+                                            <div class="form-control-position">
+                                                <i class="la la-search text-size-base text-muted la-rotate-270"></i>
+                                            </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <nav class="navbar navbar-expand-sm navbar-light bg-faded">
+                                            <!-- Links -->
+                                            <div class="collapse navbar-collapse" id="nav-content">
+                                            <ul class="navbar-nav">
+                                                <li class="nav-item dropdown">
+                                                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" id="Preview" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                                    <span style="color: #666ee8;">Sort by:</span> Name
+                                                    </a>
+                                                    <div class="dropdown-menu" aria-labelledby="Preview">
+                                                        <a class="dropdown-item" href="#">Dropdown Link 1</a>
+                                                        <a class="dropdown-item" href="#">Dropdown Link 2</a>
+                                                        <a class="dropdown-item" href="#">Dropdown Link 3</a>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            </div>
+                                        </nav>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="table-responsive">
+                                        <table  class="table table-white-space table-bordered row-grouping display no-wrap icheck table-middle dataTable" role="grid" style="border: 1px solid #ccc;" >
+                                            <thead>
+                                                <tr role="row">
+                                                    <th  tabindex="0"  >
+                                                    <input type="checkbox" id="defaultCheck checkAll" name="example2">
+                                                    </th>
+                                                    <th  tabindex="0"> CONTACT</th>
+                                                    <th  tabindex="0"> EMAIL</th>
+                                                    <th  tabindex="0"> YOU OWE THEM</th>
+                                                    <th  tabindex="0"> THEY OWE YOU</th>
+                                                                                    </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach ($archived as $user)
+                                                <tr role="row" class="odd">
+                                                    <td class="sorting_1">
+                                                    <input type="checkbox" id="defaultCheck" name="example2">
+                                                    </td>
+                                                    <td><a href="{{url('/contact',$user->id)}}" class="text-bold-600">{{$user->contact_name}}</a></td>
+                                                    <td>{{$user->email}}</td>
+                                                    <td>{{$user->last_name}}</td>
+                                                    <td>{{$user->phone}}</td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
