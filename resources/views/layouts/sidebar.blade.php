@@ -9,26 +9,25 @@
                   <ul class="dropdown-menu">
                    <li data-menu=""><a class="dropdown-item" href="{{url('/invoices')}}" data-toggle="dropdown">Invoices</a></li>
                    <li data-menu=""><a class="dropdown-item" href="{{url('/quotes')}}" data-toggle="dropdown">Quotes</a></li>
-                    <li data-menu=""><a class="dropdown-item" href="{{url('/sales-overview')}}" data-toggle="dropdown">Sales Overview</a></li>
-                   <li data-menu=""><a class="dropdown-item" href="{{url('/bills-to-pay')}}" data-toggle="dropdown">Bills To Pay</a></li>
-                    <li data-menu=""><a class="dropdown-item" href="{{url('/purchase')}}" data-toggle="dropdown">Purchase Order</a></li>
-                    <li data-menu=""><a class="dropdown-item" href="{{url('/purchase-overview')}}" data-toggle="dropdown">Purchase Overview</a></li>
-                   <li data-menu=""><a class="dropdown-item" href="{{url('/expense')}}" data-toggle="dropdown">Expense Claims</a></li>
-                   <li data-menu=""><a class="dropdown-item" href="{{url('/product')}}" data-toggle="dropdown">Product & Services</a></li>
+                    <li data-menu=""><a class="dropdown-item" href="{{url('/overview/sales')}}" data-toggle="dropdown">Sales Overview</a></li>
+                   <li data-menu=""><a class="dropdown-item" href="{{url('/bills')}}" data-toggle="dropdown">Bills To Pay</a></li>
+                    <li data-menu=""><a class="dropdown-item" href="{{url('/purchases')}}" data-toggle="dropdown">Purchase Order</a></li>
+                    <li data-menu=""><a class="dropdown-item" href="{{url('/overview/purchase')}}" data-toggle="dropdown">Purchase Overview</a></li>
+                   <li data-menu=""><a class="dropdown-item" href="{{url('/expenses')}}" data-toggle="dropdown">Expense Claims</a></li>
+                   <li data-menu=""><a class="dropdown-item" href="{{url('/products')}}" data-toggle="dropdown">Product & Services</a></li>
                         </ul>
                </li>
                <li class="dropdown nav-item" data-menu="dropdown">
                   <a class="dropdown-toggle nav-link" href="#" data-toggle="dropdown"><i class="la la-th-list"></i><span>Accounting</span></a>
                   <ul class="dropdown-menu">
-                   <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Bank Accounts</a></li>
-                   <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Reports</a></li>
-                    <li data-menu=""><a class="dropdown-item" href="{{url('/advanced')}}" data-toggle="dropdown">Advanced</a></li>
-                   <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Reports</a></li>
-                    <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Aged Payables</a></li>
-                    <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Aged Recievables</a></li>
-                   <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Balance Sheet</a></li>
-                   <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Cash Summary</a></li>
-                        </ul>
+                     <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Bank Accounts</a></li>
+                     <li data-menu=""><a class="dropdown-item" href="{{url('/reports')}}" data-toggle="dropdown">Reports</a></li>
+                     <li data-menu=""><a class="dropdown-item" href="{{url('/accounts')}}" data-toggle="dropdown">Accounts</a></li>
+                     <li data-menu=""><a class="dropdown-item" href="{{url('/taxRate')}}" data-toggle="dropdown">Tax Rate</a></li>
+                     <li data-menu=""><a class="dropdown-item" href="{{url('/advanced')}}" data-toggle="dropdown">Advanced</a></li>
+                     <hr>
+                     <li data-menu=""><a class="dropdown-item" href="#" data-toggle="dropdown">Cash Summary</a></li>
+                  </ul>
                </li>
                
                <li class="dropdown nav-item" data-menu="dropdown">

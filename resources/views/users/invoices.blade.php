@@ -6,11 +6,10 @@
         <section>
             <div class="container">
                 <div class="row">
-                <div class="col-md-12">
-                    <h2>Sales Overview</h2>
-                    <h4>Invoices</h4>
-            
-                </div>
+                    <div class="col-md-12">
+                        <h2>Sales Overview</h2>
+                        <h4>Invoices</h4>
+                    </div>
                 </div>
                 <div class="row">
                 <div class="col-md-2">
@@ -19,9 +18,7 @@
                         New Invoice
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{url('/invoice')}}"> New Invoice</a>
-                            <a class="dropdown-item" href="#"> New Repeating Invoice</a>
-                            <a class="dropdown-item" href="#">Add contact group</a>
+                            <a class="dropdown-item" href="{{url($type)}}"> New Invoice</a>
                         </div>
                     </div>
                 </div>
@@ -29,16 +26,10 @@
                     <button type="button" class="btn btn-primary btn-primary2">New credit Note</button>
                 </div>
                 <div class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-primary2">Send Statements</button>
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-primary2">Import</button>
-                </div>
-                <div class="col-md-2">
                     <button type="button" class="btn btn-primary btn-primary2">Export</button>
                 </div>
                 <div class="col-md-2">
-                    <p> invoice reminder off</p>
+                    <p> {{$type}} reminder off</p>
                 </div>
                 </div>
             </div>
@@ -59,22 +50,22 @@
                 <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
                 <div id="tabsJustifiedContent" class="tab-content">
                     <div id="all" class="tab-pane fade active show">
-                        @include('users.sub.all')
+                        @include('users.sub.all',['type' => $type,'view'=>'all'])
                     </div>
                     <div id="draft" class="tab-pane fade ">
-                        @include('users.sub.draft')
+                        @include('users.sub.all',['type' => $type,'view'=>'draft'])
                     </div>
                     <div id="approval" class="tab-pane fade">
-                        @include('users.sub.approval')
+                        @include('users.sub.all',['type' => $type,'view'=>'approval'])
                     </div>
                     <div id="awaiting" class="tab-pane fade">
-                        @include('users.sub.awaiting')
+                        @include('users.sub.all',['type' => $type,'view'=>'awaiting'])
                     </div>
                     <div id="paid" class="tab-pane fade">
-                        @include('users.sub.paid')
+                        @include('users.sub.all',['type' => $type,'view'=>'paid'])
                     </div>
                     <div id="payments" class="tab-pane fade">
-                        @include('users.sub.payment')
+                        @include('users.sub.all',['type' => $type,'view'=>'payment'])
                     </div>
                 </div>
             </div>

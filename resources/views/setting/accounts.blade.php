@@ -30,7 +30,7 @@
                                 <td class="text-truncate"><i class="la la-dot-circle-o success font-medium-1 mr-1"></i> Paid</td>
                                 <td class="text-truncate">{{$account->code}}</td>
                                 <td class="text-truncate">
-                                    <a href="JavaScript:void(0)" data-toggle="modal" data-target="#AddContactModal">{{$account->name}}</a><br/>
+                                    <a href="JavaScript:void(0)" class="taxlink" data="{{$account->id}}" data-toggle="modal" data-target="#AddContactModal">{{$account->name}}</a><br/>
                                     <span>{{$account->description}}</span>
                                 </td>
                                 <td class="text-truncate">{{$account->AccountGroups->title}}</td>
@@ -52,7 +52,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <section class="contact-form">
-                <form id="form-add-contact" class="contact-input">
+                <form id="form-add-contact" action="{{route('account-save')}}" method="post" class="contact-input">
+                    {{ csrf_field() }}
                     <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel1">Add Account</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -65,9 +66,14 @@
                                 <div class="form-group row">
                                     <label class="col-md-12 label-control">Account Type</label>
                                     <div class="col-md-6">
-                                        <select name="account_id" class="form-control">
-                                            @foreach($accountGroup as $acount)
+                                        <input type="hidden" id="accountId" name="id" value="" />
+                                        <select id="account_groups_id" name="account_groups_id" class="form-control">
+                                            @foreach($accountGroup as $key=>$val)
+                                            <optgroup label="{{$key}}">
+                                            @foreach($val as $acount)
                                             <option value="{{$acount->id}}">{{$acount->title}}</option>
+                                            @endforeach
+                                            </optgroup>
                                             @endforeach
                                         </select>
                                     </div>
@@ -78,7 +84,7 @@
                                         A unique code/number for this account (limited to 10 characters)
                                     </label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="Code" name="code">
+                                        <input type="text" id="code" class="form-control" placeholder="Code" name="code">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -87,7 +93,7 @@
                                         A short title for this account (limited to 150 characters)
                                     </label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="Name" name="name">
+                                        <input type="text" id="name" class="form-control" placeholder="Name" name="name">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -96,7 +102,7 @@
                                         A description of how this account should be used
                                     </label>
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control" placeholder="Description" name="description">
+                                        <input type="text" class="form-control" placeholder="Description" id="description" name="description">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -105,7 +111,7 @@
                                         The default tax setting for this account
                                     </label>
                                     <div class="col-md-6">
-                                        <select name="sales_account_id" class="form-control">
+                                        <select id="taxes_id" name="taxes_id" class="form-control">
                                             @foreach($taxes as $tax)
                                             <option value="{{$tax->id}}">{{$tax->name}}</option>
                                             @endforeach
@@ -115,21 +121,21 @@
 
                                 <div class="form-group row">
                                     <div class="col-md-12">
-                                        <input type="checkbox" name="show_dashboard_watchlist" >
+                                        <input type="checkbox" name="show_dashboard_watchlist" id="show_dashboard_watchlist">
                                         <label class="label-control">Show on Dashboard Watchlist</label>
                                     </div>                                    
                                 </div>
 
                                 <div class="form-group row">
                                     <div class="col-md-12">
-                                        <input type="checkbox" name="show_expense_claims" >
+                                        <input type="checkbox" id="show_expense_claims" name="show_expense_claims">
                                         <label class="label-control">Show in Expense Claims</label>
                                     </div>                                    
                                 </div>
 
                                 <div class="form-group row">
                                     <div class="col-md-12">
-                                        <input type="checkbox" name="enable_payments" >
+                                        <input type="checkbox" id="enable_payments" name="enable_payments">
                                         <label class="label-control">Enable payments to this account</label>
                                     </div>                                    
                                 </div>
@@ -143,7 +149,7 @@
                     </div>
                     <div class="modal-footer">
                     <fieldset class="position-relative has-icon-left mb-0">
-                        <button type="button" id="add-contact-item" class="btn btn-info add-contact-item" data-dismiss="modal"><i
+                        <button type="submit" id="add-contact-item" class="btn btn-info add-contact-item" ><i
                             class="la la-paper-plane-o d-lg-none"></i> <span class="d-none d-lg-block">Save</span></button>
 
                                 <button type="button" id="add-contact-item" class="btn btn-danger add-contact-item" data-dismiss="modal"><i
@@ -157,10 +163,34 @@
 </div>
 <script language="JavaScript" type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
-$(document).ready(function() {   
-   $("#compAdd").click(function(){
-      $('#components').append($('#compo').html());
-   });
+$(document).ready(function() {
+    $('.taxlink').click(function(){
+        $.ajax({
+            type:'GET',
+            url:'/ajaxAccountData',
+            data:{id:$(this).attr('data')},
+            success:function(data){
+                $('#account_groups_id').val(data.account_groups_id);
+                $('#accountId').val(data.id);
+                $('#name').val(data.name);
+                $('#code').val(data.code);
+                $('#description').val(data.description);
+                $('#taxes_id').val(data.taxes_id);
+                $('#show_dashboard_watchlist').prop( "checked", data.show_dashboard_watchlist );
+                $('#show_expense_claims').prop( "checked", data.show_expense_claims);
+                $('#enable_payments').prop( "checked", data.enable_payments);
+            }
+        });
+    });
+
+    $("#compAdd").click(function(){
+        $('#components').append($('#compo').html());
+    });
+
+    $('.modal').on('hidden.bs.modal', function(){
+        $(this).find("input,textarea,select").val('').end()
+        .find("input[type=checkbox]").prop("checked", "").end();
+    });
 });
 
 </script>

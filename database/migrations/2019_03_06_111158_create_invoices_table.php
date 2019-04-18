@@ -29,6 +29,11 @@ class CreateInvoicesTable extends Migration
             $table->decimal('total', 10, 2);
             $table->enum('type',array('Invoice','Purchase Order','Quote'));
             
+            $table->decimal('amount_paid', 15, 2);
+            $table->string('date_paid');
+            $table->string('paid_to');
+            $table->string('reference');
+
             //if Purchase order
             $table->longText('address');
             $table->string('attention');

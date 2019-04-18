@@ -5,6 +5,7 @@
    <div class="content-body">
       <section>
          <div class="container">
+            @if(!$isProfile)
             <div class="row">
                <div class="col-md-12">
                   <div class="card">
@@ -14,6 +15,7 @@
                   </div>
                </div>
             </div>
+            @endif
             <div class="row">
                <div class="col-md-12">
                   <div class="card">
@@ -23,8 +25,7 @@
                               <div class="col-md-12">
                                  <div class="card">
                                     <div class="card-header">
-                                       <h4 class="card-title" id="horz-layout-basic">Contact Information
-                                       </h4>
+                                       <h4 class="card-title" id="horz-layout-basic">{{($isProfile)?"Company Profile":"Contact Information"}}</h4>
                                     </div>
                                     <div class="card-content collpase show">
                                        <div class="card-body">
@@ -36,7 +37,12 @@
 
                                              <div class="form-body">
                                                 <input type="hidden" value={{$id}} name="id" />
+                                                <input type="hidden" value={{$isProfile}} name="isProfile" />
+                                                @if(!$isProfile)
+                                                <a href="{{url('payments',$id)}}" class="form-group link fr">Add Payment</a>
+                                                @endif
                                                 <h4 class="form-section"><i class="ft-user"></i> Personal Info</h4>
+                                                
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="contactname">Contact Name</label>
                                                    <div class="col-md-9 mx-auto">
@@ -442,16 +448,13 @@
                                                       </div>
                                                    </div>
                                                 </div>  
-
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="projectinput3">VAT Network Key
                                                    </label>
                                                    <div class="col-md-9 mx-auto">
-                                                   <input type="text" id="projectinput3" class="form-control" placeholder="key" value="{{!empty($contact->xero_network_key)?$contact->xero_network_key:''}}"  name="xero_network_key">
+                                                      <input type="text" id="projectinput3" class="form-control" placeholder="key" value="{{!empty($contact->xero_network_key)?$contact->xero_network_key:''}}"  name="xero_network_key">
                                                    </div>
-                                                   </div>     
-
-                                          
+                                                </div>
                                                 <div class="form-actions">
                                                    <button type="button" class="btn btn-warning mr-1"><i class="ft-x"></i> Cancel</button>
                                                    <!--<i class="la la-check-square-o"></i>-->

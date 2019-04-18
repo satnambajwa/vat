@@ -183,3 +183,62 @@ outline: none;text-align: left;cursor: pointer;transition: 0.3s;font-size: 17px;
 form .form-group {margin-bottom: 1rem;}
 .bbg{border-bottom:1px solid #d4cccc}
 .mb-30{margin-bottom: 25px;}
+input[type="checkbox"].form-control{
+    width: 15px;
+    float: left;
+    margin-right: 10px;
+    height: 20px;
+}
+.border{
+    border: #000 1px solid;
+    padding: 20px;
+    border-radius: 10px;
+    margin-left: 20px; 
+}
+
+.border div a span{
+    width: 100%;
+    height: 100px;
+}
+
+.panel {
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(0,10,30,.2);
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.rowlink:first-of-type {
+    border-top: 0;
+}
+
+.rowlink {
+    align-items: center;
+    display: flex;
+    color: inherit;
+    text-decoration: none;
+    padding: 8px;
+    border-top: 1px solid #ccced2;
+    list-style: none;
+    min-height: inherit;
+    position: relative;
+    display: list-item;
+    text-align: -webkit-match-parent;
+}
+.leftcontent {
+    min-width: 0;
+    padding: 0 5px;
+    min-width: 69px;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+.links{
+    padding-top: 0;
+    padding-bottom: 0;
+    flex: 1;
+}
+.primaryheading{margin-left: 10px;}

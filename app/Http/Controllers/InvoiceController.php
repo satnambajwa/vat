@@ -91,8 +91,8 @@ class InvoiceController extends Controller
             $itemLi[]=$temp2;
         }
         $data['ItemList']   =   $itemLi;
-        $data['taxes']      =   Taxes::all();
-        $data['accounts']   =   Account::all();
+        $data['taxes']      =   Taxes::where('user_id','=',Auth::user()->id);
+        $data['accounts']   =   Account::where('user_id','=',Auth::user()->id);
         return new InvoiceResource($data);
     }
 

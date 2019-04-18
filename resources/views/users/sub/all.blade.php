@@ -1,8 +1,7 @@
 <div class="row">
     <div class="col-sm-12 card">
-        
         <div class="table-responsive">
-            <table class="table table-bordered" id="invoices-all">
+            <table class="table table-bordered" id="invoices-{{$view}}">
                 <thead>
                     <tr>
                         <th>Code</th>
@@ -20,18 +19,17 @@
     </div>
     <script>
         $(function() {
-            var invoicesAll = $('#invoices-all').DataTable({
+            var invoicesAll = $('#invoices-{{$view}}').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{!! route('get.data', "all") !!}',
-                
+                ajax: '{!! route('get.data',["view"=>$view,"type"=> $type]) !!}',
                 columns: [
                     {
                         "data": "id",
                         "render": function(data, type, full, meta){
                             var out = data;
                             if(type === 'display'){
-                                out = '<a href="/invoice/'+data+'">' + full.code + '</a>';
+                                out = '<a href="/{{$type}}/'+data+'">' + full.code + '</a>';
                             }
                             return out;
                         }
@@ -47,7 +45,7 @@
             });
 
 
-            $('#invoices-all tbody').on( 'click', 'tr', function () {
+            $('#invoices-{{$view}} tbody').on( 'click', 'tr', function () {
                 $(this).toggleClass('selected');
                 console.log('dsdsds');
             } );
