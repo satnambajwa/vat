@@ -79,3 +79,12 @@ def processAllCancelled():
 if __name__ == '__main__':
   processAllCancelled()
 
+
+#https://www.facebook.com/tr?
+# noScript=1
+# &ts=1555584908000
+# &eventName=Cancel
+# &eid=146612764060692411341775821502153818114
+# &eventData=%7B%27subscription_id%27%3A+1%2C+%27reason%27%3A+%27%27%7D
+# &id=1566469273453318
+# &sig=TqzdyfKjXTnb9wABCzIU8gQDQiLHghA5YT7V1n%2F21t4%3D
