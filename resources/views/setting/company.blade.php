@@ -5,7 +5,6 @@
     <div class="content-body">
     <section>
          <div class="container">
-           
             <div class="row">
                <div class="col-md-12">
                   <div class="card">
@@ -14,17 +13,12 @@
                            <div class="row">
                               <div class="col-md-12">
                                  <div class="card">
-                                   
                                     <div class="card-content collpase show">
                                        <div class="card-body">
-
-                                       
-                                          {!! Form::open(array('route' =>'cupdate' ,'method'=>'post')) !!}
+                                          {!! Form::open(array('route' =>'compSave' ,'method'=>'post')) !!}
                                           {!! Form::hidden('_token',csrf_token()) !!}
-
-
                                              <div class="form-body">
-                                                
+                                             <input type="hidden" value="{{!empty($company->id)?$company->id:''}}" name="id">
                                                 <h4 class="form-section"><i class="ft-user"></i> Company settings</h4>
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="companyname">Company Name</label>
@@ -32,7 +26,24 @@
                                                       <input type="text" id="companyname" class="form-control" placeholder="Company Name" value="{{!empty($company->name)?$company->name:''}}" name="name">
                                                    </div>
                                                 </div>
-                                               
+                                                <div class="form-group row">
+                                                   <label class="col-md-3 label-control">Financial Year</label>
+                                                   <div class="col-md-9 mx-auto">
+                                                      <input type="text" class="form-control datepicker" placeholder="Financial Year" value="{{!empty($company->financial_year)?$company->financial_year:''}}" name="financial_year">
+                                                   </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                   <label class="col-md-3 label-control" >Book Begin From</label>
+                                                   <div class="col-md-9 mx-auto">
+                                                      <input type="text" class="form-control datepicker" placeholder="Book Begin From" value="{{!empty($company->book_begin_from)?$company->book_begin_from:''}}" name="book_begin_from">
+                                                   </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                   <label class="col-md-3 label-control" >Decimal</label>
+                                                   <div class="col-md-9 mx-auto">
+                                                      <input type="text" class="form-control" placeholder="Decimal" value="{{!empty($company->decimal)?$company->decimal:''}}" name="decimal">
+                                                   </div>
+                                                </div>
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="projectinput4">Phone Number</label>
                                                    <div class="col-md-3 mx-auto">
@@ -45,7 +56,6 @@
                                                       <input type="text" id="projectinput4" class="form-control" placeholder="Phone number" value="{{!empty($phone[2])?$phone[2]:''}}" name="phone[]">
                                                    </div>
                                                 </div>
-
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="projectinput4">FAX</label>
                                                    <div class="col-md-3 mx-auto">
@@ -72,72 +82,68 @@
                                                 </div>
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="projectinput7">Currency</label>
-                                                   <div class="col-md-3 mx-auto">
+                                                   <div class="col-md-9 mx-auto">
                                                       <select id="projectinput7" name="currency_id" class="form-control">
-                                                         <option value="1">GBP</option>
-                                                         <option value="2">INR</option>
-                                                         <option value="">Add currency</option>
+                                                         @foreach($currencies as $currency)
+                                                         <option value="{{$currency->id}}" {{($currency->id==$company->currency_id)?'selected="selected"':''}} >{{$currency->formal_currency_name}}</option>
+                                                         @endforeach
                                                       </select>
-                                                   </div>
-                                                   <label class="col-md-3 label-control">Currency Symbol</label>
-                                                   <div class="col-md-3 mx-auto">
-                                                   <input type="text" class="form-control" placeholder="Currency Symbol" value="{{!empty($contact->currency_symbol)?$contact->currency_symbol:''}}" name="currency_symbol[]">
                                                    </div>
                                                 </div>
                                                 <div class="form-group row">
-                                                   <label class="col-md-3 label-control" for="projectinput7">Base Currency</label>
-                                                   <div class="col-md-3 mx-auto">
-                                                      <select id="projectinput7" name="currency_id" class="form-control">
-                                                         <option value="1">GBP</option>
-                                                         <option value="2">INR</option>
-                                                         <option value="">Add currency</option>
-                                                      </select>
-                                                   </div>
-                                                   <label class="col-md-3 label-control">Base Currency Symbol</label>
-                                                   <div class="col-md-3 mx-auto">
-                                                   <input type="text" class="form-control" placeholder="Currency Symbol" value="{{!empty($contact->currency_symbol)?$contact->currency_symbol:''}}" name="currency_symbol[]">
+                                                   <label class="col-md-3 label-control" >Mailing Name</label>
+                                                   <div class="col-md-9 mx-auto">
+                                                      <input type="text" class="form-control" placeholder="Mailing Name" value="{{!empty($company->mail_name)?$company->mail_name:''}}" name="mail_name">
                                                    </div>
                                                 </div>
-
-
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="projectinput3">Postal Address</label>
                                                    <div class="col-md-9 mx-auto">
-                                                      <input type="text" id="projectinput3" class="form-control" placeholder="Find Address" value="{{!empty($contact->address)?$contact->address:''}}" name="address">
+                                                      <input type="text" id="projectinput3" class="form-control" placeholder="Find Address" value="{{!empty($company->address)?$company->address:''}}" name="address">
                                                    </div>
                                                 </div>
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="projectinput3">&nbsp;</label>
                                                    <div class="col-md-9 mx-auto">
-                                                      <textarea name="address1" class="form-control" rows="5">{{!empty($contact->address1)?$contact->address1:''}}</textarea>
+                                                      <textarea name="address1" class="form-control" rows="5">{{!empty($company->address1)?$company->address1:''}}</textarea>
                                                    </div>
                                                 </div>
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="projectinput3">&nbsp;</label>
                                                    <div class="col-md-9 mx-auto">
-                                                      <input type="text" id="projectinput3" class="form-control" placeholder="City/Town" value="{{!empty($contact->city)?$contact->city:''}}" name="city">
+                                                      <input type="text" id="projectinput3" class="form-control" placeholder="City/Town" value="{{!empty($company->city)?$company->city:''}}" name="city">
                                                    </div>
                                                 </div>
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="projectinput3">&nbsp;</label>
                                                    <div class="col-md-5 mx-auto">
-                                                      <input type="text" id="projectinput3" class="form-control" placeholder="State/Region" value="{{!empty($contact->state)?$contact->state:''}}" name="state">
+                                                      <input type="text" id="projectinput3" class="form-control" placeholder="State/Region" value="{{!empty($company->state)?$company->state:''}}" name="state">
                                                    </div>
                                                    <div class="col-md-4 mx-auto">
-                                                      <input type="text" id="projectinput3" class="form-control" placeholder="Pin Code" value="{{!empty($contact->postal_code)?$contact->postal_code:''}}" name="postal_code">
+                                                      <input type="text" id="projectinput3" class="form-control" placeholder="Pin Code" value="{{!empty($company->postal_code)?$company->postal_code:''}}" name="postal_code">
                                                    </div>
                                                 </div>
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="projectinput3">&nbsp;</label>
                                                    <div class="col-md-9 mx-auto">
-                                                      <input type="text" id="projectinput3" class="form-control" placeholder="Country" value="{{!empty($contact->country)?$contact->country:''}}" name="country">
+                                                      <input type="text" id="projectinput3" class="form-control" placeholder="Country" value="{{!empty($company->country)?$company->country:''}}" name="country">
+                                                   </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                   <label class="col-md-3 label-control">Show In Millions</label>
+                                                   <div class="col-md-9 mx-auto">
+                                                      <input type="checkbox" class="form-control" value="1" {{!empty($company->show_in_millions)?'checked="checked"':''}} name="show_in_millions">
+                                                   </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                   <label class="col-md-3 label-control">Is Current</label>
+                                                   <div class="col-md-9 mx-auto">
+                                                      <input type="checkbox" class="form-control" value="1" {{!empty($company->is_current)?'checked="checked"':''}} name="is_current">
                                                    </div>
                                                 </div>
 
-                                                
                                                 <div class="form-actions">
-                                                   <button type="button" class="btn btn-warning mr-1"><i class="ft-x"></i> Cancel</button>
-                                                   <!--<i class="la la-check-square-o"></i>-->
+                                                   {!! Form::reset('Cancel', array('class' => 'btn btn-warning mr-1')) !!}
                                                    {!! Form::submit('Save', array('class' => 'btn btn-primary')) !!}
                                                 </div>
                                                 {!! Form::close() !!}

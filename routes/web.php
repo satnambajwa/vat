@@ -17,7 +17,8 @@ Route::get('/', function (){return view('welcome');});
 Route::get('/dashboard', 'Users@index');
 Route::get('/profile', 'Users@profile');
 Route::get('/company/{id?}', 'Users@company')->name('company');
-Route::get('/companies', 'Users@companies');
+Route::get('/companies', 'Users@companies')->name('companies');
+Route::post('/compSave', 'Users@companySave')->name('compSave');
 
 Route::get('/invoices', 'Users@invoices')->name('invoices');
 Route::get('/invoice', 'Users@create');

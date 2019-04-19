@@ -16,10 +16,14 @@ class CreatePaymentsTable extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
-            $table->bigInteger('currency_id');
-            $table->bigInteger('contact_id');
-            $table->decimal('amount', 10, 2);
-            $table->string('type');
+            $table->string('date');
+            $table->bigInteger('payment_types_id');
+            $table->bigInteger('cr_account_id');
+            $table->decimal('cr_amount', 10, 2);
+            $table->bigInteger('dr_account_id');
+            $table->decimal('dr_amount', 10, 2);
+            $table->bigInteger('invoice_id');
+            $table->string('comment');
             $table->timestamps();
         });
     }

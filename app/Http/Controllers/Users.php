@@ -14,6 +14,7 @@ use App\Invoice;
 use App\InvoiceDetails;
 use App\Contact;
 use App\Company;
+use App\Currency;
 use App\Payment;
 use App\Person;
 use App\Taxes;
@@ -51,9 +52,37 @@ class Users extends Controller
             $company        =   Company::where([['id','=',$id],['user_id','=',Auth::user()->id]])->first();
         else
             $company        =   new Company;
-        
-        $compactData    =   array('company');
+
+        $phone          =   explode('-',$company->phone);
+        $fax            =   explode('-',$company->fax);
+        $mobile         =   explode('-',$company->mobile);
+        $currencies     =   Currency::where('user_id','=',Auth::user()->id)->get();
+
+        $compactData    =   array('company','phone','fax','mobile','currencies');
         return View::make("setting.company", compact($compactData));
+    }
+
+    public function companySave(Request $request)
+    {
+        $phone              =   implode('-',$request->get('phone'));
+        $request['phone']   =   $phone;
+        $fax                =   implode('-',$request->get('fax'));
+        $request['fax']     =   $fax;
+        $mobile             =   implode('-',$request->get('mobile'));
+        $request['mobile']  =   $mobile;
+        $request['user_id'] =   Auth::user()->id;
+
+        if(empty($request->get('id'))){
+            $add    =   Company::create(['user_id' => Auth::user()->id] + $request->all());
+        }
+        else{
+            $id     =   $request->get('id');
+            $add    =   Company::find($id);
+            $add->update($request->all());
+        }
+        
+        
+        return redirect()->route('companies');
     }
 
     public function profile()
