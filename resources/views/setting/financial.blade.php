@@ -29,7 +29,7 @@
                                                 <div class="form-group row">
                                                    <label class="col-md-12 label-control bbg" for="contactname">Currency</label>
                                                    <div class="col-md-12 mx-auto mb-30">
-                                                      {Currency}
+                                                      {{$company->currency_id}}
                                                    </div>
                                                 </div>
                                                 <div class="form-group row">

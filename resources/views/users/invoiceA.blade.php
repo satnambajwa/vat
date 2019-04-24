@@ -103,11 +103,7 @@
                                                 @endforeach
                                             </td>
                                             <td class="tax">
-                                                @foreach($data['taxes'] as $itm)
-                                                {{($item['tax_id']==$itm['id'])?$itm['name']:""}} 
-                                                @endforeach
-                                                   
-                                                
+                                                {{$item['tax_id']}}
                                             </td>
                                             <td class="amount">
                                                 {{$item['amount']}}

@@ -31,6 +31,7 @@ class CreateCompaniesTable extends Migration
             $table->string('financial_year');
             $table->string('book_begin_from');
             $table->string('decimal');
+            $table->tinyInteger('is_current');
             $table->tinyInteger('show_in_millions')->default(0);
             $table->timestamps();
         });

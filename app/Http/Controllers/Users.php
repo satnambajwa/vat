@@ -16,6 +16,7 @@ use App\Contact;
 use App\Company;
 use App\Currency;
 use App\Payment;
+use App\PaymentType;
 use App\Person;
 use App\Taxes;
 use App\Item;
@@ -668,34 +669,34 @@ class Users extends Controller
         return redirect()->route('contacts');
     }
 
-    public function payments($id)
+    public function payments()
     {
-        $payments   =   Payment::where('contact_id','=',$id)->get();
-        $compactData=array('payments','id');
+        $payments       =   Payment::where('user_id','=',Auth::user()->id)->get();
+        $compactData    =   array('payments','id');
         return View::make("users.payments", compact($compactData));
     }
 
     public function payment($id=null)
     {
-        $payment    =   Payment::find($id);
-        $compactData=array('payment','id');
+        $payment        =   Payment::find($id);
+        $payments       =   PaymentType::all();
+        $accounts       =   Account::where('user_id','=',Auth::user()->id)->get();
+
+        $compactData    =   array('payment','id','payments','accounts');
         return View::make("users.payment", compact($compactData));
     }
 
     public function savePayment(Request $request)
     {
         $id        =   $request->get('id');
-        if($id)
+        if($id){
             $log    =   Payment::find($id);
-        else
-            $log    =  new Payment;
-        $log->currency_id   =   $request->get('currency_id');
-        $log->contact_id    =   $request->get('contact_id');
-        $log->user_id       =   Auth::user()->id;
-        $log->amount        =   $request->get('amount');
-        $log->type          =   $request->get('type');
-        $log->save();
-        return redirect()->route('payments',$log->contact_id);
+            $log->update($request->all());
+        }
+        else{
+            $log    =  Payment::create(['user_id' => Auth::user()->id] + $request->all());
+        }
+        return redirect()->route('payments');
     }
 
     public function overview($type)

@@ -14,6 +14,7 @@ use App\Taxes;
 use App\TaxComponent;
 use App\Item;
 use App\Groups;
+use App\Company;
 use App\Account;
 use App\AccountGroups;
 use Auth;
@@ -124,15 +125,19 @@ class Setting extends Controller
         return redirect()->route('accounts');
     }
 
-    public function financial(){
-        $accounts  =   Account::where('user_id','=',Auth::user()->id);
+    public function financial()
+    {
+        $company       =   Company::where('user_id','=',Auth::user()->id);
+        
+        $accounts       =   Account::where('user_id','=',Auth::user()->id);
         $accountGroup   =   AccountGroups::where('user_id','=',Auth::user()->id);
-        $taxes  =   Taxes::where('user_id','=',Auth::user()->id);
-        $compactData=array('accounts','accountGroup','taxes');
+        $taxes          =   Taxes::where('user_id','=',Auth::user()->id);
+        $compactData    =   array('company','accounts','accountGroup','taxes');
         return View::make("setting.financial",compact($compactData));
     }
 
-    public function conversion(){
+    public function conversion()
+    {
         $taxes  =   Taxes::where('user_id','=',Auth::user()->id);
         $compactData=array('taxes');
         return View::make("setting.conversion",compact($compactData));

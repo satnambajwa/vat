@@ -44,7 +44,7 @@ Route::get('/overview/{type}', 'Users@overview');
 Route::get('/contacts', 'Users@contacts')->name('contacts');
 Route::get('/contact/{id?}', 'Users@contact')->name('contact');
 Route::post('/cupdate', 'Users@contactUpdate')->name('cupdate');
-Route::get('/payments/{id}', 'Users@payments')->name('payments');
+Route::get('/payments', 'Users@payments')->name('payments');
 Route::get('/payment/{id?}', 'Users@payment')->name('payment');
 Route::post('/sPayment', 'Users@savePayment')->name('sPayment');
 
@@ -86,3 +86,6 @@ Route::get('/client', 'Users@client')->name('client');
 Route::get('generate-pdf','ReportsController@generatePDF');
 Route::get('/reports', 'ReportsController@index');
 Route::get('/balance-sheet', 'ReportsController@balanceSheet')->name('balance-sheet');
+Route::get('/cash-summary', 'ReportsController@cashSummary')->name('cash-summary');
+Route::get('/profit-loss', 'ReportsController@profitLoss')->name('profit-loss');
+

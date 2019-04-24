@@ -19,50 +19,29 @@
                                 <td>Asserts</td>
                                 <td>4/16/2019</td>
                             </tr>
+                            @foreach($data as $key =>$val)
                             <tr>
-                                <td>Current Asserts</td>
-                                <td></td>
+                                <td>{{$key}}</td>
+                                <td>{{$val}}</td>
                             </tr>
-                            <tr>
-                                <td>Accounts Receivable</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Total Current Assets</td>
-                                <td></td>
-                            </tr>
-                            
-                            <tr>
-                                <td>Total Assets</td>
-                                <td></td>
-                            </tr>
+                            @endforeach
                         </table>
                     </div>
                     <div class="col-md-6">
                         <table style="width: 100%;">
                             <tr>
-                                <td>Asserts</td>
+                                <td>Liability</td>
                                 <td>4/16/2019</td>
                             </tr>
+                            @foreach($ddata as $key =>$val)
                             <tr>
-                                <td>Current Asserts</td>
-                                <td></td>
+                                <td>{{$key}}</td>
+                                <td>{{$val}}</td>
                             </tr>
-                            <tr>
-                                <td>Accounts Receivable</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Total Current Assets</td>
-                                <td></td>
-                            </tr>
-                            
-                            <tr>
-                                <td>Total Assets</td>
-                                <td></td>
-                            </tr>
+                            @endforeach
                         </table>
                     </div>
+                </div>    
             </div>
         </div>
     </div>

@@ -5,6 +5,7 @@
     <div class="content-body">
         
         <!-- Products sell and New Orders -->
+        <!--
         <div class="row match-height">
             <div class="col-xl-6 col-12" id="ecommerceChartView">
                 <div class="card card-shadow" style="height: 418px;">
@@ -101,7 +102,7 @@ var myChart = new Chart(ctx, {
             </div>
         </div>
         <!--/ Products sell and New Orders -->
-        <!-- Recent Transactions -->
+        <!-- 
         <div class="row">
             <div id="recent-transactions" class="col-12">
                 <div class="card">
@@ -294,7 +295,9 @@ var myChart = new Chart(ctx, {
             </div>
         </div>
         <!--/ Recent Transactions -->
-        <!--Recent Orders & Monthly Sales -->
+
+
+        <!--Recent Orders & Monthly Sales 
         <div class="row match-height">
             <div class="col-xl-8 col-lg-12">
                 <div class="card" style="height: 394px;">
