@@ -13,14 +13,14 @@ class CreateAccountTable extends Migration
      */
     public function up()
     {
-        Schema::create('account', function (Blueprint $table) {
+        Schema::create('accounts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->bigInteger('account_groups_id');
-            $table->bigInteger('tax_id');
-            $table->string('code');
-            $table->string('name');
-            $table->longText('description');
+            $table->bigInteger('taxes_id');
+            $table->string('code')->nullable();
+            $table->string('name')->nullable();
+            $table->longText('description')->nullable();
             $table->tinyInteger('show_dashboard_watchlist')->default(0);
             $table->tinyInteger('show_expense_claims')->default(0);
             $table->tinyInteger('enable_payments')->default(0);
@@ -36,6 +36,6 @@ class CreateAccountTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('account');
+        Schema::dropIfExists('accounts');
     }
 }

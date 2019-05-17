@@ -16,9 +16,9 @@ class CreatePersonTable extends Migration
         Schema::create('person', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('contact_id');
-            $table->string('first_name');
-            $table->string('last_name');
-            $table->string('email');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('email')->nullable();
             $table->tinyInteger('is_primary')->default(0);
             $table->timestamps();
             $table->tinyInteger('status')->default(1);

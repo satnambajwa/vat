@@ -16,9 +16,9 @@ class CreateTaxComponentsTable extends Migration
         Schema::create('tax_components', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
-            $table->bigInteger('tax_id');
+            $table->bigInteger('taxes_id');
             $table->string('title');
-            $table->decimal('value',5,2);
+            $table->decimal('value',5,2)->default(0);
             $table->tinyInteger('compound')->default(0);
             $table->timestamps();
             $table->tinyInteger('status')->default(1);

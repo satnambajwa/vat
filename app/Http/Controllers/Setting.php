@@ -15,6 +15,7 @@ use App\TaxComponent;
 use App\Item;
 use App\Groups;
 use App\Company;
+use App\Currency;
 use App\Account;
 use App\AccountGroups;
 use Auth;
@@ -89,6 +90,7 @@ class Setting extends Controller
     public function accounts(){
         $accounts   =   Account::where('user_id','=',Auth::user()->id)->get();
         $data       =   AccountGroups::all();
+        $accountGroup=array();
         foreach($data as $ag)
             $accountGroup[$ag->type][]  =   $ag;
 
@@ -127,12 +129,12 @@ class Setting extends Controller
 
     public function financial()
     {
-        $company       =   Company::where('user_id','=',Auth::user()->id);
-        
+        $company        =   Company::where('user_id','=',Auth::user()->id)->first();
+        $currency       =   Currency::where('user_id','=',1)->get();
         $accounts       =   Account::where('user_id','=',Auth::user()->id);
         $accountGroup   =   AccountGroups::where('user_id','=',Auth::user()->id);
         $taxes          =   Taxes::where('user_id','=',Auth::user()->id);
-        $compactData    =   array('company','accounts','accountGroup','taxes');
+        $compactData    =   array('company','currency','accounts','accountGroup','taxes');
         return View::make("setting.financial",compact($compactData));
     }
 

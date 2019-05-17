@@ -8,11 +8,11 @@ class InvoiceDetails extends Model
 {
     public function invoice()
     {
-        return $this->hasOne('App\Invoice');
+        return $this->belongsTo('App\Invoice');
     }
 
-    public function tax()
+    public function taxes()
     {
-        return $this->hasOne('App\taxes');
+        return $this->belongsTo('App\taxes');
     }    
 }

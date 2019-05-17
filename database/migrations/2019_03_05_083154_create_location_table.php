@@ -17,9 +17,9 @@ class CreateLocationTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->string('title');
-            $table->string('code');
-            $table->string('iso_code');
-            $table->tinyInteger('status');
+            $table->string('code')->nullable();
+            $table->string('iso_code')->nullable();
+            $table->tinyInteger('status')->nullable();
             $table->timestamps();
         });
     }

@@ -19,11 +19,11 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="row">
-                                <div class="col-md-5"></div>
-                                <div class="col-md-2">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#AddContactModal">Import</button>
-                                        <button type="submit" class="btn btn-primary">Export</button>
+                                        <button type="button" class="btn btn-primary btn-primary2 active" data-toggle="modal" data-target="#AddContactModal">Import</button>
+                                        <button type="submit" class="btn btn-primary btn-primary2 ">Export</button>
                                     </div>
 
                                     <div class="modal fade" id="AddContactModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
@@ -60,10 +60,10 @@
 
                                 </div>
                                 <div class="col-md-2">
-                                    <a href="Statements.html"> <button type="button" class="btn btn-secondary">Send Statements</button></a>
+                                    <a href="Statements.html"> <button type="button" class="btn btn-secondary btn-primary2">Send Statements</button></a>
                                 </div>
                                 <div class="col-md-2">
-                                    <a href="{{url('/contact')}}"> <button type="button" class="btn btn-success">Add Contacts</button></a>
+                                    <a href="{{url('/contact')}}"> <button type="button" class="btn btn-success btn-primary2">Add Contacts</button></a>
                                 </div>
                             </div>
                         </div>

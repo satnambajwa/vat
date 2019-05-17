@@ -20,9 +20,11 @@
                         <div class="col-md-2"> 
                             <div class="form-group ui-widget">
                             <label >To: </label>
-                                @foreach($data['contact'] as $itm)
-                                {{isset($data['contact_id']) && $data['contact_id']==$itm['id']?$itm['contact_name']:''}}
-                                @endforeach                            
+                                @if(isset($data['contact']))
+                                    @foreach($data['contact'] as $itm)
+                                    {{isset($data['contact_id']) && $data['contact_id']==$itm['id']?$itm['contact_name']:''}}
+                                    @endforeach
+                                @endif
                             </div>
                             </div>                                        
                         <div class="col-md-2"> 
@@ -52,25 +54,28 @@
                         <div class="col-md-2 ">
                         <p style="text-align: end; padding-top: 25px;font-size: 1.2rem;">
                             <a href="{{url('generate-pdf')}}"><i class="la la-eye"></i> Preview</a></p>
-                        </div>                                     
-                        
+                        </div>
                     </div>
                     <hr>
                     <div class="row">
                         <div class="col-md-6 col-12">
-                            {{$data['amount_tax']==1?'GBP British Pound':''}}
+                        @if(isset($currencies))
+                        <select name="currency_id" class="form-control" style="width: 200px;">
+                            @foreach($currencies as $currency)
+                                <option value="{{$currency->id}}" {{ $data['currency_id'] == $currency->id?'Selected':''}}>{{$currency->name}}</option>
+                            @endforeach
+                        </select>
+                        @endif
                         </div>
                         <div class="col-md-6 col-12" style="float:right">
                             <label style="float:left;width:20%">Amount are: </label>
-                            {{$data['amount_tax']}}
-
+                            {{isset($data['amount_tax'])?$data['amount_tax']:''}}
                         </div>
                     </div>
 
                     <div class="row tbg">
                         <div class="col-md-12 table-responsive">
                             <div id="table" class="table-editable">
-
                                 <table id="item_table" class="table table-bordered table-responsive-md text-center">
                                     <thead>
                                     <tr>
@@ -86,6 +91,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+                                        @if(isset($data['items']))
                                         @foreach($data['items'] as $item)
                                         <tr id= "{{$item['id']}}" class="tblrow">
                                             <td >
@@ -109,23 +115,20 @@
                                                 {{$item['amount']}}
                                             </td>
                                             <td class="action">
-                                            <input type="hidden" name="iid[]" value="{{$item['id']}}" />
-                                            <input type="hidden" name="description[]" value="{{$item['description']}}" />
-                                            <input type="hidden" name="quantity[]" value="{{$item['quantity']}}" />
-                                            <input type="hidden" name="unit_price[]" value="{{$item['unit_price']}}" />
-                                            <input type="hidden" name="discount[]" value="{{$item['discount']}}" />
-                                            <input type="hidden" name="amount[]" value="{{$item['amount']}}" />
-
+                                                <input type="hidden" name="iid[]" value="{{$item['id']}}" />
+                                                <input type="hidden" name="description[]" value="{{$item['description']}}" />
+                                                <input type="hidden" name="quantity[]" value="{{$item['quantity']}}" />
+                                                <input type="hidden" name="unit_price[]" value="{{$item['unit_price']}}" />
+                                                <input type="hidden" name="discount[]" value="{{$item['discount']}}" />
+                                                <input type="hidden" name="amount[]" value="{{$item['amount']}}" />
                                                 <button type="button" class="close" aria-label="Close"><span aria-hidden="true">×</span></button>
                                             </td>
                                         </tr>
                                         @endforeach
-                                        
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
-
-                                
                         </div>
                     </div>
 
@@ -141,7 +144,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-6">VAT</div>
+                                <div class="col-6">Total tax amount</div>
                                 <div class="col-6" >
                                     <input type="hidden" value="{{isset($data['vat'])?$data['vat']:0}}" class="vatInput" name="vat">
                                     <p class="vatText" >{{isset($data['vat'])?$data['vat']:0}}</p>
@@ -157,11 +160,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class="container">
                     <div class="row">
                         <div class="col-md-10 row">
                             <div class="col-md-2">
                                 <label>Amount Paid</label>
-                                <input type="text" autocomplete="off" name="amount_paid" id="amount_paid" class="form-control" value="{{$data['total']}}">
+                                <input type="text" autocomplete="off" name="amount_paid" id="amount_paid" class="form-control" value="{{isset($data['total'])?$data['total']:''}}">
                             </div>
                             <div class="col-md-2">
                                 <label>Date Paid</label>
@@ -191,21 +195,22 @@
                     
                     <div class="row" style="margin-top:2%; margin-bottom: 2%;">
                         <div class="col-md-12">
-                            <button type="button" id="addNote" class="btn btn-primary btn-primary2 ">Add Note</button>
+                            <button type="button" id="addNote" class="btn btn-primary">Add Note</button>
+                            <button type="button" id="showLog" class="btn btn-primary">Show History Note</button>
                         </div>
-                        <div class="col-md-12" style="margin-top:2%; margin-bottom: 2%;">
-                        <div id="addNoteContainer" class="col-md-6">
-                            <input type="hidden" name="csrf-token" content="{{ csrf_token() }}" />
-                            <textarea id="noteData" class="form-control"></textarea>
-                            <div class="col-md-12" style="margin-top:2%; margin-bottom: 2%;">
-                                <button type="button" id="saveNote" class="btn btn-primary btn-primary2 ">Save</button>
-                                <button type="button" id="note" class="btn btn-primary btn-primary2 ">Cancel</button>
+                        <div class="col-md-12" style="margin-top:2%; margin-bottom: 2%;margin-left: -1.3%;">
+                            <div id="addNoteContainer" class="col-md-6">
+                                <input type="hidden" name="csrf-token" content="{{ csrf_token() }}" />
+                                <textarea id="noteData" class="form-control"></textarea>
+                                <div class="col-md-12" style="margin-top:2%; margin-bottom: 2%;">
+                                    <button type="button" id="saveNote" class="btn btn-primary btn-primary2 ">Save</button>
+                                    <button type="button" id="note" class="btn btn-primary btn-primary2 ">Cancel</button>
+                                </div>
                             </div>
-                        </div>
                         </div>
                     </div>
                     @if(isset($dat) && count($dat->logs)>0)
-                    <div class="row" style="margin-top:2%; margin-bottom: 2%;">
+                    <div id="loglisting" class="row" style="margin-top:2%; margin-bottom: 2%;">
                         <div class="col-md-8">
                             <div class="row">
                                 <div class="col-md-3">Changes</div>
@@ -216,31 +221,60 @@
                         </div>    
                         @foreach($dat->logs as $log)
                         <div class="col-md-8">
-                        <div class="row">
-                            <div class="col-md-3">
-                                {{$log->action}}
-                            </div>
-                            <div class="col-md-3">
-                                {{$log->created_at}}
-                            </div>
-                            <div class="col-md-3">
-                                {{$log->user->name}}
-                            </div>
-                            <div class="col-md-3">
-                                {{$log->note}}
-                            </div>
-                        </div>    
+                            <div class="row">
+                                <div class="col-md-3">
+                                    {{$log->action}}
+                                </div>
+                                <div class="col-md-3">
+                                    {{$log->created_at}}
+                                </div>
+                                <div class="col-md-3">
+                                    {{$log->user->name}}
+                                </div>
+                                <div class="col-md-3">
+                                    {{$log->note}}
+                                </div>
+                            </div>    
                         </div>
                         @endforeach
                     </div>
+                </div>
                     @endif
                 </div>
+
             </section>
-            
-        </form>    
+        </form>
     </div>
     <script src="//code.jquery.com/jquery.js"></script>
     <script>
+    $('#addNoteContainer').hide();
+    $('#saveNote').click(function(){
+        var data    =   $('#noteData').val();
+        var idate   =   {{(isset($data['id']))?$data['id']:0}};
+        if(data != ''){
+            $.ajax({
+                url: "/noteSave",
+                headers: {
+                'X-CSRF-TOKEN': $('input[name="csrf-token"]').attr('content')
+                },
+                type: "POST",
+                data: {value : data,id:idate},
+                
+            });
+            $('#addNoteContainer').hide();
+        }
+    });
+    $('#note').click(function(){
+        $('#noteData').val('');
+        $('#addNoteContainer').hide();
+    });
+    $('#loglisting').hide();
+    $('#showLog').click(function(){
+        $('#loglisting').show();
+    });
+    $('#addNote').click(function(){
+        $('#addNoteContainer').show();
+    });
         $('#payment').click(function(){
             var data={
                 'amount_paid':$('#amount_paid').val(),
@@ -248,15 +282,14 @@
                 'paid_to':$('#paid_to').val(),
                 'reference':$('#reference').val()
             }
-
             $.ajax({
-                    url: "/paymentSave",
-                    headers: {
-                    'X-CSRF-TOKEN': $('input[name="csrf-token"]').attr('content')
-                    },
-                    type: "POST",
-                    data: data
-                });
+                url: "/paymentSave",
+                headers: {
+                'X-CSRF-TOKEN': $('input[name="csrf-token"]').attr('content')
+                },
+                type: "POST",
+                data: data
+            });
         });
     </script>
 </div>

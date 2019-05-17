@@ -7,12 +7,12 @@
             <div class="container in-border">
                 
                 <div>
-                    <h1 style="text-transform: capitalize;">{{$type}} overview</h1>
-                    <div style="height:100px;"></div>
+                    <h1 class="tax-heading" style="text-transform: capitalize;">{{$type}} overview</h1>
+                    <div></div>
                 </div>
                 @foreach($data as $val=>$data1)
                 <hr>
-                <div style="height:100px;"></div>
+                <div ></div>
                 <h2>{{$val}}</h2>
                 <div class="row ">
                     <div class="col-11 row">

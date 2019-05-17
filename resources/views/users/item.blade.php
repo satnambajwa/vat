@@ -141,7 +141,7 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button type="button" class="btn btn-danger btn-primary2">Cancel</button>
+                    <button type="button" class="btn btn-danger btn-primary2">Cancel</button>
                         </div>
                     </div>                    
                 </div>

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Session;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 
@@ -32,11 +32,91 @@ class Users extends Controller
         $this->middleware('auth');
     }
     
+    public function api()
+    {
+        
+        $url            =   'https://test-api.service.hmrc.gov.uk/oauth/authorize';
+        $response_type  =   'code';
+        $client_id      =   'nCUu5iDW9StxunrWd7cn19nyYR0a';
+        $scope          =   'read:vat+write:vat';
+        $redirect_uri   =   'http://localhost:8000/satnam';
+
+        $compactData    =   array('url','response_type','client_id','scope','redirect_uri');
+        return View::make("users.api", compact($compactData));
+    }
+
+    public function apiresponse(Request $request)
+    {
+        if(isset($request['code'])){
+            $endpoint = "https://test-api.service.hmrc.gov.uk/oauth/token";
+            $headers[] = 'Accept: application/json';
+            $headers[] = 'Content-Type: application/json';
+            //$headers[] = 'Content-length: 0';
+
+            $post = [
+                'grant_type' => 'authorization_code',
+                'client_id' => 'nCUu5iDW9StxunrWd7cn19nyYR0a',
+                'client_secret' => '0c7fce1e-2e39-4b2e-987f-84a3341aad15',
+                'redirect_uri' => 'http://localhost:8000/satnam',
+                'code'   => $request['code'],
+            ];
+
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL,$endpoint);
+            // SSL important
+            //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS,$post);
+            //curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            $output = curl_exec($ch);
+            
+            if (curl_error($ch)) {
+                $error_msg = curl_error($ch);
+                dd($error_msg);
+            }else{
+                $response   =  (array) json_decode($output);
+                if(!isset($response['error'])){
+                    //print_r($response);die;
+                    Session::put('access_token', $response['access_token']);
+                    Session::put('refresh_token', $response['refresh_token']);
+                    Session::put('scope', $response['scope']);
+                    Session::put('token_type', $response['token_type']);
+                }else
+                    return redirect()->route('api');
+            }
+            curl_close($ch);
+        }
+        else{
+            echo 'OUT';
+            dd($request);
+        }
+        return redirect()->route('vatTax');
+    }   
+
+    public function vatTax()
+    {
+        //dd(Session::get('access_token'));
+        
+        return View::make("users.vat");
+    }
+
     public function index()
     {
-        $orders     =   Invoice::where([['status', '=', '1'],['type','=','Order']])->get();
         $invoices   =   Invoice::where([['status', '=', '1'],['type','=','Invoice']])->get();
-        $compactData=array('invoices', 'orders');
+        $bills      =   Invoice::where([['status', '=', '1'],['type','=','bill']])->get();
+        $data          = array();
+        $bdata          = array();
+        foreach($invoices as $invoice){
+            $key        =   date("M d", strtotime($invoice->estimated_date));
+            $data[$key] =   $invoice->total;
+        }
+        foreach($bills as $bill){
+            $key        =   date("M d", strtotime($bill->estimated_date));
+            $bdata[$key] =   $bill->total;
+        }
+        $compactData=array('data','bdata');
         return View::make("users.index", compact($compactData));
     }
 
@@ -57,7 +137,7 @@ class Users extends Controller
         $phone          =   explode('-',$company->phone);
         $fax            =   explode('-',$company->fax);
         $mobile         =   explode('-',$company->mobile);
-        $currencies     =   Currency::where('user_id','=',Auth::user()->id)->get();
+        $currencies     =   Currency::all();
 
         $compactData    =   array('company','phone','fax','mobile','currencies');
         return View::make("setting.company", compact($compactData));
@@ -83,7 +163,7 @@ class Users extends Controller
         }
         
         
-        return redirect()->route('companies');
+        return redirect()->route('financial');
     }
 
     public function profile()
@@ -115,216 +195,20 @@ class Users extends Controller
         return View::make("users.invoices",['type'=>'purchase']);
     }
 
-    public function invoice(Request $request,$id)
-    {
-        $dat                =   Invoice::findOrFail($id);//->logs()->orderBy('created_at')->get();
-        $data['id']         =   $dat->id;
-        $data['contact_id'] =   $dat->contact_id;
-        $data['date']       =   $dat->date;
-        $data['estimated_date'] =   $dat->estimated_date;
-        $data['code']       =   $dat->code;
-        $data['reference']  =   $dat->reference;
-        $data['sub_total']  =   $dat->sub_total;
-        $data['vat']        =   $dat->vat;
-        $data['type']       =   $dat->type;
-        $data['dicount']    =   $dat->dicount;
-        $data['total']      =   $dat->total;
-        $data['currency_id']=   $dat->currency_id;
-        $data['amount_tax'] =   $dat->amount_tax;
-        $data['status']     =   $dat->status;
-        $items              =   array();
-        foreach($dat->items as $item){
-            $temp['id']             =   $item->id;
-            $temp['item_id']        =   $item->item_id;
-            $temp['description']    =   $item->description;
-            $temp['quantity']       =   $item->quantity;
-            $temp['unit_price']     =   $item->unit_price;
-            $temp['discount']       =   $item->discount;
-            $temp['account_id']     =   $item->account_id;
-            $temp['amount']         =   $item->amount;
-            $Tax                    =   Taxes::find($item->taxes_id);
-            $temp['tax_id']         =   $Tax->name;
-            $temp['tax_rate']       =   $Tax->total_tax_rate;
-            $amount                 =   $item->unit_price*$item->quantity;
-            $discount               =   $amount*$item->discount/100;
-            $taxableAmount          =   $amount-$discount;
-            $tax1                   =   $taxableAmount*$Tax->total_tax_rate/100;
-            $temp['tax']            =   $tax1;
-            $items[]                =   $temp;
-        }
-        //dd($dat->logs);
-        $dat                =   $dat;
-        $data['items']      =   $items;
-        $itemList           =   Item::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['ItemList']   =   $itemList;
-        $data['contact']    =   Contact::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['accounts']   =   Account::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['taxes']      =   Taxes::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $compactData        =   array('data','dat');
-        $view   =  ($dat->status<2)?"users.invoice":"users.invoiceA";
-        return View::make($view, compact($compactData));
-    }
-    
-    public function purchase(Request $request,$id)
-    {
-        
-        $dat                =   Invoice::findOrFail($id);
-        $data['id']         =   $dat->id;
-        $data['contact_id'] =   $dat->contact_id;
-        $data['date']       =   $dat->date;
-        $data['estimated_date'] =   $dat->estimated_date;
-        $data['code']       =   $dat->code;
-        $data['reference']  =   $dat->reference;
-        $data['sub_total']  =   $dat->sub_total;
-        $data['vat']        =   $dat->vat;
-        $data['type']       =   $dat->type;
-        $data['dicount']    =   $dat->dicount;
-        $data['total']      =   $dat->total;
-        $data['currency_id']=   $dat->currency_id;
-        $data['amount_tax'] =   $dat->amount_tax;
-        $data['status']     =   $dat->status;
-        $items              =   array();
-        foreach($dat->items as $item){
-            $temp['id']             =   $item->id;
-            $temp['item_id']        =   $item->item_id;
-            $temp['description']    =   $item->description;
-            $temp['quantity']       =   $item->quantity;
-            $temp['unit_price']     =   $item->unit_price;
-            $temp['discount']       =   $item->discount;
-            $temp['account_id']     =   $item->account_id;
-            $temp['amount']         =   $item->amount;
-            $Tax                    =   Taxes::find($item->taxes_id);
-            $temp['tax_id']         =   $Tax->name;
-            $temp['tax_rate']       =   $Tax->total_tax_rate;
-            $amount                 =   $item->unit_price*$item->quantity;
-            $discount               =   $amount*$item->discount/100;
-            $taxableAmount          =   $amount-$discount;
-            $tax1                   =   $taxableAmount*$Tax->total_tax_rate/100;
-            $temp['tax']            =   $tax1;
-            $items[]                =   $temp;
-        }
-        $dat                =   $dat;
-        $data['items']      =   $items;
-        $itemList           =   Item::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['ItemList']   =   $itemList;
-        $data['accounts']   =   Account::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['contact']    =   Contact::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['taxes']      =   Taxes::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $compactData        =   array('data','dat');
-        return View::make("users.invoice", compact($compactData));
-    }
-    
-    public function quote(Request $request,$id)
-    {
-        
-        $dat                =   Invoice::findOrFail($id);
-        $data['id']         =   $dat->id;
-        $data['contact_id'] =   $dat->contact_id;
-        $data['date']       =   $dat->date;
-        $data['estimated_date'] =   $dat->estimated_date;
-        $data['code']       =   $dat->code;
-        $data['reference']  =   $dat->reference;
-        $data['sub_total']  =   $dat->sub_total;
-        $data['vat']        =   $dat->vat;
-        $data['type']       =   $dat->type;
-        $data['dicount']    =   $dat->dicount;
-        $data['total']      =   $dat->total;
-        $data['currency_id']=   $dat->currency_id;
-        $data['amount_tax'] =   $dat->amount_tax;
-        $data['status']     =   $dat->status;
-        $items              =   array();
-        foreach($dat->items as $item){
-            $temp['id']             =   $item->id;
-            $temp['item_id']        =   $item->item_id;
-            $temp['description']    =   $item->description;
-            $temp['quantity']       =   $item->quantity;
-            $temp['unit_price']     =   $item->unit_price;
-            $temp['discount']       =   $item->discount;
-            $temp['account_id']     =   $item->account_id;
-            $temp['amount']         =   $item->amount;
-            $Tax                    =   Taxes::find($item->taxes_id);
-            $temp['tax_id']         =   $Tax->name;
-            $temp['tax_rate']       =   $Tax->total_tax_rate;
-            $amount                 =   $item->unit_price*$item->quantity;
-            $discount               =   $amount*$item->discount/100;
-            $taxableAmount          =   $amount-$discount;
-            $tax1                   =   $taxableAmount*$Tax->total_tax_rate/100;
-            $temp['tax']            =   $tax1;
-            $items[]                =   $temp;
-        }
-        $dat                =   $dat;
-        $data['items']      =   $items;
-        $itemList           =   Item::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['ItemList']   =   $itemList;
-        $data['accounts']   =   Account::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['contact']    =   Contact::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['taxes']      =   Taxes::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $compactData        =   array('data','dat');
-        return View::make("users.invoice", compact($compactData));
-    }
-
     public function bills()
     {
         return View::make("users.invoices",['type'=>'bill']);
-    }
-
-    public function bill(Request $request,$id)
-    {
-        
-        $dat                =   Invoice::findOrFail($id);
-        $data['id']         =   $dat->id;
-        $data['contact_id'] =   $dat->contact_id;
-        $data['date']       =   $dat->date;
-        $data['estimated_date'] =   $dat->estimated_date;
-        $data['code']       =   $dat->code;
-        $data['reference']  =   $dat->reference;
-        $data['sub_total']  =   $dat->sub_total;
-        $data['vat']        =   $dat->vat;
-        $data['type']       =   $dat->type;
-        $data['dicount']    =   $dat->dicount;
-        $data['total']      =   $dat->total;
-        $data['currency_id']=   $dat->currency_id;
-        $data['amount_tax'] =   $dat->amount_tax;
-        $data['status']     =   $dat->status;
-        $items              =   array();
-        foreach($dat->items as $item){
-            $temp['id']             =   $item->id;
-            $temp['item_id']        =   $item->item_id;
-            $temp['description']    =   $item->description;
-            $temp['quantity']       =   $item->quantity;
-            $temp['unit_price']     =   $item->unit_price;
-            $temp['discount']       =   $item->discount;
-            $temp['account_id']     =   $item->account_id;
-            $temp['amount']         =   $item->amount;
-            $Tax                    =   Taxes::find($item->taxes_id);
-            $temp['tax_id']         =   $Tax->name;
-            $temp['tax_rate']       =   $Tax->total_tax_rate;
-            $amount                 =   $item->unit_price*$item->quantity;
-            $discount               =   $amount*$item->discount/100;
-            $taxableAmount          =   $amount-$discount;
-            $tax1                   =   $taxableAmount*$Tax->total_tax_rate/100;
-            $temp['tax']            =   $tax1;
-            $items[]                =   $temp;
-        }
-        $dat                =   $dat;
-        $data['items']      =   $items;
-        $itemList           =   Item::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['ItemList']   =   $itemList;
-        $data['accounts']   =   Account::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['contact']    =   Contact::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['taxes']      =   Taxes::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $compactData        =   array('data','dat');
-        return View::make("users.invoice", compact($compactData));
     }
     
     public function expenses()
     {
         return View::make("users.invoices",['type'=>'expense']);
     }
-    
-    public function expense(Request $request,$id='')
+
+    public function invoice(Request $request,$id)
     {
         $dat                =   Invoice::findOrFail($id);
+        $currencies         =   Currency::all();
         $data['id']         =   $dat->id;
         $data['contact_id'] =   $dat->contact_id;
         $data['date']       =   $dat->date;
@@ -350,8 +234,9 @@ class Users extends Controller
             $temp['account_id']     =   $item->account_id;
             $temp['amount']         =   $item->amount;
             $Tax                    =   Taxes::find($item->taxes_id);
-            $temp['tax_id']         =   $Tax->name;
+            $temp['tax_id']         =   $Tax->id;
             $temp['tax_rate']       =   $Tax->total_tax_rate;
+            $temp['tax_name']       =   $Tax->name;
             $amount                 =   $item->unit_price*$item->quantity;
             $discount               =   $amount*$item->discount/100;
             $taxableAmount          =   $amount-$discount;
@@ -359,16 +244,163 @@ class Users extends Controller
             $temp['tax']            =   $tax1;
             $items[]                =   $temp;
         }
+        $dat                =   $dat;
         $data['items']      =   $items;
         $itemList           =   Item::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
         $data['ItemList']   =   $itemList;
+        
+        $url   =   explode('/',$request->path());
+        if($url[0]=='invoice'||$url[0]=='quote')
+            $data['contact']        =   Contact::where([['status', '=', '1'],['type','=','customer'],['user_id','=',Auth::user()->id]])->get();
+        else
+            $data['contact']        =   Contact::where([['status', '=', '1'],['type','=','supplier'],['user_id','=',Auth::user()->id]])->get();
+        
+        //$data['contact']    =   Contact::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
         $data['accounts']   =   Account::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['contact']    =   Contact::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
         $data['taxes']      =   Taxes::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $compactData        =   array('data');
+        $compactData        =   array('data','dat','currencies');
+        $view   =  ($dat->status<2)?"users.invoice":"users.invoiceA";
+        return View::make($view, compact($compactData));
+    }
+    
+   
+    public function create(Request $request)
+    {
+        $currencies             =   Currency::all();
+        $data['currency_id']    =   1;
+        $data['type']           =   $request->path();
+        $data['amount_tax']     =   'No Tax';
+        $data['items']          =   array();
+        $data['ItemList']       =   Item::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
+        $data['accounts']       =   Account::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
+        $data['taxes']          =   Taxes::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
+        if($request->path()=='invoice'||$request->path()=='quote')
+            $data['contact']        =   Contact::where([['status', '=', '1'],['type','=','customer'],['user_id','=',Auth::user()->id]])->get();
+        else
+            $data['contact']        =   Contact::where([['status', '=', '1'],['type','=','supplier'],['user_id','=',Auth::user()->id]])->get();
+        
+        $compactData            =   array('data','currencies');
         return View::make("users.invoice", compact($compactData));
     }
 
+    public function update(Request $request, $id=null)
+    {
+        $id     =   (empty($id))?$request->get('id'):$id;
+        $type   =   $request->get('type');
+        $action =   array(); 
+       
+        if(!empty($id)){
+            $share = Invoice::find($id);
+            $action['action'] = 'Edited';
+        }else{
+            $share = new Invoice;
+            $action['action'] = 'Created';
+        }
+        $link   = 0;
+        if($request->get('save')>2){
+            $status =   2;
+            $link   =   $request->get('save');
+        }else
+            $status =   $request->get('save');
+
+        $share->contact_id  =   $request->get('contact_id');
+        $share->user_id     =   Auth::user()->id;
+        $share->type        =   $type;
+        $share->date        =   $request->get('date');
+        $share->estimated_date =$request->get('estimated_date');
+        $share->code        =   $request->get('code');
+        $share->reference   =   $request->get('reference');
+        $share->currency_id =   $request->get('currency_id');
+        $share->amount_tax  =   $request->get('amount_tax');
+        $share->sub_total   =   $request->get('sub_total');
+        $share->vat         =   $request->get('vat');
+        $share->total       =   $request->get('total');
+        $share->status      =   $status;
+        //dd($share);
+        $share->save();
+        $totalAmount    =   0;
+        $action['message']  =   $share->code.' to '.$share->contact->contact_name.' for '.$share->sub_total;
+
+        $log                =   new Note;
+        $log->user_id       =   Auth::user()->id;
+        $log->link_type_id  =   $share->id;
+        $log->note          =   $action['message'];
+        $log->action        =   $action['action'];
+        $log->save();
+
+        if(empty($id))
+            $id =   $share->id;
+        
+        if(!empty($request->get('items'))){
+            //Deleting
+            if(!empty($request->get('iid')))
+                InvoiceDetails::where('invoice_id','=',$id)->whereNotIn('id',$request->get('iid'))->delete();
+            foreach($request->get('items') as $key=>$item){
+                $nid         =   isset($request->get('iid')[$key])?$request->get('iid')[$key]:0;
+            
+                if($nid)
+                    $InvoiceDetails = InvoiceDetails::find($nid); 
+                else
+                    $InvoiceDetails = new InvoiceDetails;
+                    
+                if(!is_numeric($request->get('accounts')[$key])){
+                    $acco   =   Account::whereName($request->get('accounts')[$key])->first();
+                    $InvoiceDetails->account_id =   $acco->id;
+                }else
+                    $InvoiceDetails->account_id =   $request->get('accounts')[$key];
+    
+                if(!is_numeric($request->get('taxes')[$key])){
+                    $ta   =   Taxes::whereName($request->get('taxes')[$key])->first();
+                    $InvoiceDetails->taxes_id =   $ta->id;
+                    $taxrate    =   $ta->total_tax_rate;
+                }else{
+                    $InvoiceDetails->taxes_id   =   $request->get('taxes')[$key];
+                    $dat    =   Taxes::where('id',$InvoiceDetails->taxes_id)->first();
+                    $taxrate    =   $dat->total_tax_rate;
+                }
+
+                $InvoiceDetails->item_id    =   $item;
+                $InvoiceDetails->invoice_id =   $id;                
+                $InvoiceDetails->description=   $request->get('description')[$key];
+                $InvoiceDetails->quantity   =   $request->get('quantity')[$key];
+                $InvoiceDetails->unit_price =   $request->get('unit_price')[$key];
+                $InvoiceDetails->discount   =   $request->get('discount')[$key];
+                $InvoiceDetails->amount     =   $request->get('amount')[$key];
+                if($share->amount_tax=='Tax Exclusive'){
+                    $totalAmount    += $InvoiceDetails->amount+($InvoiceDetails->amount*$taxrate)/100;
+                }else if($share->amount_tax=='Tax Inclusive'){
+                    $totalVat    = $InvoiceDetails->amount-($InvoiceDetails->amount*100)/(100+$taxrate);
+                    $totalAmount += $InvoiceDetails->amount; 
+                }else
+                    $totalAmount    += $InvoiceDetails->amount;
+                $InvoiceDetails->save();
+            }
+        }
+        $share->total    =   $totalAmount;
+        $share->save();
+        
+        
+        if($type=='invoice'){
+            $url    = ($link==0)?'invoices':'invoice';
+        }elseif($type=='quote'){
+            $url    =   ($link==0)?'quotes':'quote';
+        }elseif($type=='purchase'){
+            if($share->contact->type =='customer')
+            {
+                $contact    =   Contact::find($share->contact_id);
+                $contact->type='supplier';
+                $contact->save();
+            }
+            $url    =   ($link==0)?'purchases':'purchase';
+        }
+        elseif($type=='expense'){
+            $url    =   ($link==0)?'expenses':'expense';
+        }else{
+            $url    =   ($link==0)?'bills':'bill';
+        }
+        return redirect()->route($url);        
+    }
+    
     public function items()
     {
         $data           =   Item::where('user_id','=',Auth::user()->id)->get();
@@ -436,120 +468,6 @@ class Users extends Controller
         
         Invoice::create(['user_id' => Auth::user()->id] + $request->all());
         return redirect()->route('invoices');        
-    }
-
-    public function create(Request $request)
-    {
-        $data['currency_id']    =   1;
-        $data['type']           =   $request->path();
-        $data['amount_tax']     =   'No Tax';
-        $data['items']          =   array();
-        $data['ItemList']       =   Item::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['accounts']       =   Account::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['taxes']          =   Taxes::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $data['contact']        =   Contact::where([['status', '=', '1'],['user_id','=',Auth::user()->id]])->get();
-        $compactData            =   array('data');
-        return View::make("users.invoice", compact($compactData));
-    }
-    public function update(Request $request, $id=null)
-    {
-        
-        $id     =   (empty($id))?$request->get('id'):$id;
-        $type   =   $request->get('type');
-        $action =   array();
-        
-        
-        if(!empty($id)){
-            $share = Invoice::find($id);
-            $action['action'] = 'Edited';
-        }else{
-            $share = new Invoice;
-            $action['action'] = 'Created';
-        }
-        $share->contact_id  =   $request->get('contact_id');
-        $share->user_id     =   Auth::user()->id;
-        $share->type        =   $type;
-        $share->date        =   $request->get('date');
-        $share->estimated_date =$request->get('estimated_date');
-        $share->code        =   $request->get('code');
-        $share->reference   =   $request->get('reference');
-        $share->currency_id =   $request->get('currency_id');
-        $share->amount_tax  =   $request->get('amount_tax');
-        $share->sub_total   =   $request->get('sub_total');
-        $share->status      =   $request->get('save');
-        $share->save();
-        $totalAmount    =   0;
-        $action['message']  =   $share->code.' to '.$share->contact->contact_name.' for '.$share->sub_total;
-        
-        $log                =   new Note;
-        $log->user_id       =   Auth::user()->id;
-        $log->link_type_id  =   $share->id;
-        $log->note          =   $action['message'];
-        $log->action        =   $action['action'];
-        $log->save();
-
-        if(empty($id))
-            $id =   $share->id;
-        
-        if(!empty($request->get('items'))){
-            //Deleting
-            if(!empty($request->get('iid')))
-                InvoiceDetails::where('invoice_id','=',$id)->whereNotIn('id',$request->get('iid'))->delete();
-            foreach($request->get('items') as $key=>$item){
-                $nid         =   isset($request->get('iid')[$key])?$request->get('iid')[$key]:0;
-            
-                if($nid)
-                    $InvoiceDetails = InvoiceDetails::find($nid); 
-                else
-                    $InvoiceDetails = new InvoiceDetails;
-                    
-                if(!is_numeric($request->get('accounts')[$key])){
-                    $acco   =   Account::whereName($request->get('accounts')[$key])->first();
-                    $InvoiceDetails->account_id =   $acco->id;
-                }else
-                    $InvoiceDetails->account_id =   $request->get('accounts')[$key];
-    
-                if(!is_numeric($request->get('taxes')[$key])){
-                    $ta   =   Taxes::whereName($request->get('taxes')[$key])->first();
-                    $InvoiceDetails->taxes_id =   $ta->id;
-                }else
-                    $InvoiceDetails->taxes_id   =   $request->get('taxes')[$key];
-
-                $InvoiceDetails->item_id    =   $item;
-                $InvoiceDetails->invoice_id =   $id;                
-                $InvoiceDetails->description=   $request->get('description')[$key];
-                $InvoiceDetails->quantity   =   $request->get('quantity')[$key];
-                $InvoiceDetails->unit_price =   $request->get('unit_price')[$key];
-                $InvoiceDetails->discount   =   $request->get('discount')[$key];
-                $InvoiceDetails->amount     =   $request->get('amount')[$key];
-                $totalAmount    += $InvoiceDetails->amount;
-                $InvoiceDetails->save();
-
-            }
-        }
-        $share->total    =   $totalAmount;
-        $share->save();
-        
-        
-        if($type=='invoice')
-            $url    =   'invoices';
-        elseif($type=='quote')
-            $url    =   'quotes';
-        elseif($type=='purchase'){
-            if($share->contact->type =='customer')
-            {
-                $contact    =   Contact::find($share->contact_id);
-                $contact->type='supplier';
-                $contact->save();
-            }
-            $url    =   'purchases';
-        }
-        elseif($type=='expense')
-            $url    =   'expenses';
-        else
-            $url    =   'bills';
-
-        return redirect()->route($url);        
     }
 
     public function client()
@@ -772,6 +690,25 @@ class Users extends Controller
         $log->action        =   'Note';
         $log->save();
     }
+
+    public function addContact(Request $request)
+    {
+        $type       =   $request->get('type');
+        if( $type=='purchase' || $type =='bill' || $type =='expense')
+            $dat    =   'supplier';
+        else
+            $dat    =   'customer';
+    
+        $contact                =   new Contact;
+        $contact->type          =   $dat;
+        $contact->user_id       =   Auth::user()->id;
+        $contact->contact_name  =   $request->get('value');
+        $contact->save();
+        return $contact->id;
+    }
+    
+    
+
     public function getData($type,$view)
     {
         switch ($view) {

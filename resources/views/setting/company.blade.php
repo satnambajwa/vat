@@ -38,10 +38,34 @@
                                                       <input type="text" class="form-control datepicker" placeholder="Book Begin From" value="{{!empty($company->book_begin_from)?$company->book_begin_from:''}}" name="book_begin_from">
                                                    </div>
                                                 </div>
+
+
+                                                
+                                                <div class="form-group row">
+                                                   <label class="col-md-3 label-control" >GST Number</label>
+                                                   <div class="col-md-9 mx-auto">
+                                                      <input type="text" class="form-control" placeholder="GST Number" value="{{!empty($company->gst_number)?$company->gst_number:''}}" name="gst_number">
+                                                   </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                   <label class="col-md-3 label-control" >Pan Number</label>
+                                                   <div class="col-md-9 mx-auto">
+                                                      <input type="text" class="form-control" placeholder="Pan Number" value="{{!empty($company->pan_number)?$company->pan_number:''}}" name="pan_number">
+                                                   </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                   <label class="col-md-3 label-control" >Tan Number</label>
+                                                   <div class="col-md-9 mx-auto">
+                                                      <input type="text" class="form-control" placeholder="Tan Number" value="{{!empty($company->tan_number)?$company->tan_number:''}}" name="tan_number">
+                                                   </div>
+                                                </div>
+
+
+
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" >Decimal</label>
                                                    <div class="col-md-9 mx-auto">
-                                                      <input type="text" class="form-control" placeholder="Decimal" value="{{!empty($company->decimal)?$company->decimal:''}}" name="decimal">
+                                                      <input type="text" class="form-control" placeholder="Decimal" value="{{!empty($company->decimal_no)?$company->decimal_no:''}}" name="decimal_no">
                                                    </div>
                                                 </div>
                                                 <div class="form-group row">

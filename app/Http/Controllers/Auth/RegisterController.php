@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
-use App\Contact;
-use App\Person;
+use App\Company;
+use App\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -70,22 +70,28 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
-
+        
+        $User->roles()->attach(Role::where('name','User')->first());
+        /*
         $names =  explode(' ',$data['name']);
         $Contact    =   Contact::create([
             'contact_name' => $data['name'],
             'user_id' => $User->id,
             'status' => 2,
         ]);
-
-        Person::create([
+        Profile::create([
             'contact_id' => $Contact->id,
             'first_name'=>$names[0],
             'last_name'=>(isset($names[1]))?$names[1]:'',
             'email'=>$data['email'],
             'is_primary'=>1,
         ]);
-
+        */
+        Company::create([
+            'user_id' => $User->id,
+            'name'=>$data['name'],
+            'currency_id'=>1
+        ]);
         return $User;
     }
 }

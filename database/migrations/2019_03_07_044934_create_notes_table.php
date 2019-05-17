@@ -17,9 +17,9 @@ class CreateNotesTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->bigInteger('link_type_id');
-            $table->longText('note');
-            $table->string('action');
-            $table->string('type');
+            $table->longText('note')->nullable();
+            $table->string('action')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }

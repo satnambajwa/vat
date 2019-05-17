@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-md-2"> 
                             <div class="form-group ui-widget">
-                                <a href="{{url('/item')}}" class="btn primery-btn">Add New</a>
+                                <a href="{{url('/item')}}" class="btn primery-btn tax-heading">Add New</a>
                             </div>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                                             <td>{{$item->purchase_unit_price}}</td>
                                             <td>{{$item->sell_unit_price}}</td>
                                             <td>{{$item->quantity}}</td>
-                                            <td><button type="button" class="close" onclick="removeRow(this)" aria-label="Close"><span aria-hidden="true">×</span></button></td>
+                                            <td class="pro-action"><button type="button" class="close" onclick="removeRow(this)" aria-label="Close"><span aria-hidden="true">×</span></button></td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -60,8 +60,6 @@
                         </div>
                     </div>
 
-                    
-                    
                 </div>
             </section> 
     </div>

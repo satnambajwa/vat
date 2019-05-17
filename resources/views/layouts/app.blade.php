@@ -32,7 +32,7 @@
                     <li class="nav-item">
                         <a class="navbar-brand" href="index.html">
                         <img class="brand-logo" alt="modern admin logo" src="{{ URL::asset('assets/images/logo/logo.png')}}">
-                        <h3 class="brand-text">Modern Admin</h3>
+                        <h3 class="brand-text">Vat Accounting</h3>
                         </a>
                     </li>
                     <li class="nav-item d-md-none"><a class="nav-link open-navbar-container" data-toggle="collapse" data-target="#navbar-mobile"><i class="la la-ellipsis-v"></i></a></li>

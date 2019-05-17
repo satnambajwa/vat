@@ -1,3 +1,4 @@
+<div class="container">
 <div class="row">
     <div class="col-sm-12 card">
         <div class="table-responsive">
@@ -56,5 +57,5 @@
         });
     </script>
     @stack('scripts')
-
+</div>
 </div>

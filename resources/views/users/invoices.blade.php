@@ -7,34 +7,27 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <h2>Sales Overview</h2>
+                        <h2 style="text-transform: capitalize;color: #459211;">{{Route::current()->getName()}} Overview</h2>
                         <h4>Invoices</h4>
                     </div>
                 </div>
                 <div class="row">
-                <div class="col-md-2">
-                    <div class="dropdown">
-                        <button type="button" class="btn btn-primary btn-primary2 dropdown-toggle" data-toggle="dropdown">
-                        New Invoice
-                        </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{url($type)}}"> New Invoice</a>
+                    <div class="col-md-2">
+                        <div class="dropdown">
+                            <a class="btn btn-primary btn-primary2" href="{{url($type)}}">
+                            New {{Route::current()->getName()}}
+                            </a>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-primary2">New credit Note</button>
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-primary2">Export</button>
-                </div>
-                <div class="col-md-2">
-                    <p> {{$type}} reminder off</p>
-                </div>
+                    <div class="col-md-2">
+                        <a class="btn btn-primary btn-primary2" href="{{ route('export') }}">Export</a>
+                    </div>
                 </div>
             </div>
         </section>
-        <div class="row" style="margin-top: 5px;">
+        <div class="container" style="margin-top: 1%; background: #fff; border: 1px solid #ccc;
+         padding:10px;">
+        <div class="row" style="margin-top: 5px; padding: 15px;">
             <div class="col-md-12">
                 <ul id="tabsJustified" class="nav nav-tabs">
                 <li class="nav-item"><a href="" data-target="#all" data-toggle="tab" class="nav-link small text-uppercase active">All</a></li>
@@ -71,5 +64,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection

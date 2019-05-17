@@ -17,13 +17,14 @@ class CreateInvoiceDetailsTable extends Migration
 
             $table->bigIncrements('id');
             $table->bigInteger('invoice_id');
-            $table->bigInteger('account_id');
-            $table->bigInteger('item_id');
-            $table->bigInteger('tax_id');
-            $table->decimal('quantity', 10, 2);
-            $table->decimal('unit_price', 10, 2);
-            $table->decimal('discount', 5, 2);
-            $table->decimal('amount', 10, 2);	
+            $table->bigInteger('account_id')->nullable();
+            $table->bigInteger('item_id')->nullable();
+            $table->bigInteger('taxes_id')->nullable();
+            $table->longText('description')->nullable();
+            $table->decimal('quantity', 10, 2)->nullable();
+            $table->decimal('unit_price', 10, 2)->nullable();
+            $table->decimal('discount', 5, 2)->nullable();
+            $table->decimal('amount', 10, 2)->nullable();	
             $table->timestamps();
             $table->tinyInteger('status')->default(1);
         });

@@ -17,7 +17,7 @@ class CreatePaymentTypesTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->string('name');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

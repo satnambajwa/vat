@@ -25,7 +25,7 @@
                               <div class="col-md-12">
                                  <div class="card">
                                     <div class="card-header">
-                                       <h4 class="card-title" id="horz-layout-basic">{{($isProfile)?"Company Profile":"Contact Information"}}</h4>
+                                       <h4 class="card-title tax-heading" id="horz-layout-basic">{{($isProfile)?"Company Profile":"Contact Information"}}</h4>
                                     </div>
                                     <div class="card-content collpase show">
                                        <div class="card-body">
@@ -283,7 +283,7 @@
                                                    </div>
                                                 </div>
                                                 <h4 class="form-section"><i class="ft-clipboard"></i>Financial Details
-                                                   <small style="color: #666ee8;">All defaults can be overridden on individual transactions</small>
+                                                   <small style="color: #459211;">All defaults can be overridden on individual transactions</small>
                                                 </h4>
                                                 <div class="form-group row">
                                                    <label class="col-md-3 label-control" for="projectinput5">Sales Settings</label>
@@ -456,9 +456,9 @@
                                                    </div>
                                                 </div>
                                                 <div class="form-actions">
-                                                   <button type="button" class="btn btn-warning mr-1"><i class="ft-x"></i> Cancel</button>
+                                                   <button type="button" class="btn btn-danger mr-1"><i class="ft-x"></i> Cancel</button>
                                                    <!--<i class="la la-check-square-o"></i>-->
-                                                   {!! Form::submit('Save', array('class' => 'btn btn-primary')) !!}
+                                                   {!! Form::submit('Save', array('class' => 'btn btn-success')) !!}
                                                 </div>
                                                 {!! Form::close() !!}
                                           </div>

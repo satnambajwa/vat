@@ -1,6 +1,6 @@
+<div class="container">
 <div class="row">
     <div class="col-sm-12 card">
-        
         <div class="table-responsive">
             <table class="table table-bordered" id="invoices-awaiting">
                 <thead>
@@ -60,4 +60,5 @@
     </script>
     @stack('scripts')
 
+</div>
 </div>

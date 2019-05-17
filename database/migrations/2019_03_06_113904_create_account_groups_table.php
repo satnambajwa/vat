@@ -17,8 +17,8 @@ class CreateAccountGroupsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->string('title');
-            $table->longText('discription');
-            $table->string('type');
+            $table->longText('description')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
             $table->tinyInteger('status')->default(1);
         });

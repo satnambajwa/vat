@@ -11,6 +11,11 @@ class Taxes extends Model
         return $this->hasMany('App\account');
     }
 
+    public function items()
+    {
+        return $this->hasMany('App\InvoiceDetails');
+    }
+
     public function components()
     {
         return $this->hasMany('App\TaxComponent');

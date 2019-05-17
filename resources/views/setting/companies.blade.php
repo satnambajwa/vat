@@ -44,7 +44,7 @@
                                 <td class="text-truncate"><span class="avatar avatar-xs">{{$company->financial_year}}</span></td>
                                 <td class="text-truncate">{{$company->book_begin_from}}</td>
                                 <td class="text-truncate">{{$company->currency->formal_currency_name}}</td>
-                                <td><button type="button" class="btn btn-sm btn-outline-info round">{{$company->decimal}}</button></td>
+                                <td><button type="button" class="btn btn-sm btn-outline-info round">{{$company->decimal_no}}</button></td>
                             </tr>
                             @endforeach
                             </tbody>

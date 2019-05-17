@@ -16,30 +16,29 @@ class CreateInvoicesTable extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
-            $table->bigInteger('currency_id');
-            $table->bigInteger('contact_id');
-            $table->string('code');
-            $table->string('reference');
-            $table->string('date');
-            $table->string('estimated_date');//due date or delivery date 
-            $table->enum('amount_tax',array('Tax Exclusive','Tax Inclusive','No Tax'));
-            $table->decimal('sub_total', 10, 2);
-            $table->decimal('discount', 5, 2);
-            $table->decimal('vat', 5, 2);
-            $table->decimal('total', 10, 2);
-            $table->enum('type',array('Invoice','Purchase Order','Quote'));
+            $table->bigInteger('currency_id')->nullable();
+            $table->bigInteger('contact_id')->nullable();
+            $table->string('code')->nullable();
+            $table->string('reference')->nullable();
+            $table->string('date')->nullable();
+            $table->string('estimated_date')->nullable();//due date or delivery date 
+            $table->string('amount_tax')->default('Tax Exclusive');
+            $table->decimal('sub_total', 10, 2)->nullable();
+            $table->decimal('discount', 5, 2)->nullable();
+            $table->decimal('vat', 5, 2)->nullable();
+            $table->decimal('total', 10, 2)->nullable();
+            $table->enum('type',array('Invoice','Purchase Order','Quote'))->nullable();
             
-            $table->decimal('amount_paid', 15, 2);
-            $table->string('date_paid');
-            $table->string('paid_to');
-            $table->string('reference');
 
+            $table->decimal('amount_paid', 15, 2)->nullable();
+            $table->string('date_paid')->nullable();
+            $table->string('paid_to')->nullable();
             //if Purchase order
-            $table->longText('address');
-            $table->string('attention');
-            $table->string('telephone');
-            $table->longText('delivery_instructions');//delivery_instructions for purchase and terms for quote
-            
+            $table->longText('address')->nullable();
+            $table->string('attention')->nullable();
+            $table->string('telephone')->nullable();
+            $table->longText('delivery_instructions')->nullable();
+            //delivery_instructions for purchase and terms for quote
             $table->timestamps();
             //$table->dropSoftDeletes();
             $table->tinyInteger('status')->default(1);

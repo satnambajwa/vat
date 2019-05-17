@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Dashboard Title')
 @section('content')
-
+<div class="container">
 <div class="content-wrapper">
     <div class="content-body">
         <!-- Recent Transactions -->
@@ -9,13 +9,18 @@
             <div id="recent-transactions" class="col-12">
                 <div class="card">
                 <div class="card-header">
-                    <h4 class="card-title">Recent Transactions</h4>
-                    
-                    <button type="button" class="btn btn-primary offset-md-11" data-toggle="modal" data-target="#AddContactModal">Add</button>
+                    <div class="row">
+                        <div class="col-md-9">
+                    <h4 class="card-title tax-heading">Taxes</h4>
+                    </div>
+                    <div class="col-md-3">
+                    <button type="button" class="btn btn-primary offset-md-9" data-toggle="modal" data-target="#AddContactModal">Add</button>
                 </div>
+            </div>
+        </div>
                 <div class="card-content">
                     <div class="table-responsive">
-                        <table id="recent-orders" class="table table-hover table-xl mb-0">
+                        <table id="recent-orders" class="table table-hover table-bordered table-xl mb-0">
                             <thead>
                             <tr>
                                 <th class="border-top-0">Status</th>
@@ -42,6 +47,7 @@
         </div>
         
     </div>
+</div>
 </div>
 <div class="modal fade" id="AddContactModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
     <div class="modal-dialog" role="document">
