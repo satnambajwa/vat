@@ -14,6 +14,8 @@
 
 
 Route::get('/', function (){return view('welcome');});
+Route::get('/site', function (){return view('welcome');})->name('site');
+
 Route::get('/dashboard', ['uses'=>'Users@index']);
 Route::get('/profile', ['uses'=>'Users@profile','middleware'=>'roles','roles'=>['Admin','User']]);
 Route::get('/company/{id?}',['uses'=> 'Users@company','as'=>'company','middleware'=>'roles','roles'=>['Admin','User']]);
@@ -21,62 +23,53 @@ Route::get('/companies', ['uses'=> 'Users@companies','as'=>'companies','middlewa
 Route::post('/compSave', 'Users@companySave')->name('compSave');
 
 Route::get('/invoices', 'Users@invoices')->name('invoices');
-Route::get('/invoice', 'Users@create');
-Route::get('/invoice/{id}', 'Users@invoice');
-
 Route::get('/quotes', 'Users@quotes')->name('quotes');
-Route::get('/quote/{id}', 'Users@quote');
-Route::get('/quote', 'Users@create');
-
 Route::get('/purchases', 'Users@purchases')->name('purchases');
-Route::get('/purchase/{id}', 'Users@purchase');
-Route::get('/purchase', 'Users@create');
+Route::get('/bills', 'Users@bills')->name('bills');
+Route::get('/expenses', 'Users@expenses')->name('expenses');
+
+Route::get('/invoice', 'Users@create')->name('invoice');
+Route::get('/quote', 'Users@create')->name('quote');
+Route::get('/purchase', 'Users@create')->name('purchase');
+Route::get('/bill', 'Users@create')->name('bill');
+Route::get('/expense', 'Users@create')->name('expense');
+
+Route::get('/invoice/{id}', 'Users@invoice');
+Route::get('/purchase/{id}', 'Users@invoice');
+Route::get('/quote/{id}', 'Users@invoice');
+Route::get('/bill/{id?}', 'Users@invoice');
+Route::get('/expense/{id}', 'Users@invoice');
 
 Route::post('/update/{id?}', 'Users@update')->name('update');
+
 
 Route::get('/products', 'Users@items')->name('products');
 Route::get('/item/{id?}', 'Users@item')->name('item');
 Route::post('/itemsave}', 'Users@itemSave')->name('itemsave');
-
 Route::get('/overview/{type}', 'Users@overview');
-
 Route::get('/contacts', 'Users@contacts')->name('contacts');
 Route::get('/contact/{id?}', 'Users@contact')->name('contact');
 Route::post('/cupdate', 'Users@contactUpdate')->name('cupdate');
 Route::get('/payments', 'Users@payments')->name('payments');
 Route::get('/payment/{id?}', 'Users@payment')->name('payment');
 Route::post('/sPayment', 'Users@savePayment')->name('sPayment');
-
 Route::get('get-data-my-datatables/{type}/{view}', ['as'=>'get.data','uses'=>'Users@getData']);
-
-Route::get('/bills', 'Users@bills')->name('bills');
-Route::get('/bill', 'Users@create');
-Route::get('/bill/{id?}', 'Users@bill');
-
-Route::get('/expense/{id}', 'Users@expense');
-Route::get('/expenses', 'Users@expenses')->name('expenses');
-Route::get('/expense', 'Users@create');
-
 Route::get('/advanced', 'Setting@advanced')->name('advanced');
-
 Route::get('/accounts', 'Setting@accounts')->name('accounts');
 Route::get('/ajaxAccountData', 'Setting@ajaxAccountData')->name('ajaxAccountData');
 Route::post('/account-save', 'Setting@accountSave')->name('account-save');
-
 Route::post('/noteSave', 'Users@noteSave')->name('noteSave');
+Route::post('/addContact', 'Users@addContact')->name('addContact');
+
+
 
 Route::get('/taxRate', 'Setting@taxRate')->name('taxRate');
 Route::post('/tax-save', 'Setting@taxSave')->name('tax-save');
 Route::get('/ajaxTaxData', 'Setting@ajaxTaxData')->name('ajaxTaxData');
-
 Route::get('/financial', 'Setting@financial')->name('financial');
-//Route::get('/tax', 'Setting@tax')->name('tax');
-
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/client', 'Users@client')->name('client');
-
-
 Route::get('generate-pdf','ReportsController@generatePDF');
 Route::get('/reports', 'ReportsController@index');
 Route::get('/balance-sheet', 'ReportsController@balanceSheet')->name('balance-sheet');
@@ -85,65 +78,14 @@ Route::get('/cash-summary', 'ReportsController@cashSummary')->name('cash-summary
 Route::get('/profit-loss', 'ReportsController@profitLoss')->name('profit-loss');
 
 
-/*
-Route::get('/', function (){return view('welcome');});
-Route::get('/dashboard', 'Users@index');
-Route::get('/profile', 'Users@profile');
-Route::get('/company/{id?}', 'Users@company')->name('company');
-Route::get('/companies', 'Users@companies')->name('companies');
-Route::post('/compSave', 'Users@companySave')->name('compSave');
 
-Route::get('/invoices', 'Users@invoices')->name('invoices');
-Route::get('/invoice', 'Users@create');
-Route::get('/invoice/{id}', 'Users@invoice');
 
-Route::get('/quotes', 'Users@quotes')->name('quotes');
-Route::get('/quote/{id}', 'Users@quote');
-Route::get('/quote', 'Users@create');
+Route::get('api','Users@api')->name('api');
+Route::get('satnam', 'Users@apiresponse')->name('satnam');
+Route::get('vatTax','Users@vatTax')->name('vatTax');
 
-Route::get('/purchases', 'Users@purchases')->name('purchases');
-Route::get('/purchase/{id}', 'Users@purchase');
-Route::get('/purchase', 'Users@create');
 
-Route::post('/update/{id?}', 'Users@update')->name('update');
 
-Route::get('/products', 'Users@items')->name('products');
-Route::get('/item/{id?}', 'Users@item')->name('item');
-Route::post('/itemsave}', 'Users@itemSave')->name('itemsave');
-
-Route::get('/overview/{type}', 'Users@overview');
-
-Route::get('/contacts', 'Users@contacts')->name('contacts');
-Route::get('/contact/{id?}', 'Users@contact')->name('contact');
-Route::post('/cupdate', 'Users@contactUpdate')->name('cupdate');
-
-Route::get('/payments', 'Users@payments')->name('payments');
-Route::get('/payment/{id?}', 'Users@payment')->name('payment');
-Route::post('/sPayment', 'Users@savePayment')->name('sPayment');
-
-Route::get('/bills', 'Users@bills')->name('bills');
-Route::get('/bill/{id}', 'Users@bill');
-Route::get('/expense/{id}', 'Users@expense');
-Route::get('/expenses', 'Users@expenses')->name('expenses');
-
-Route::get('/advanced', 'Setting@advanced')->name('advanced');
-Route::get('/financial', 'Setting@financial')->name('financial');
-Route::get('/accounts', 'Setting@accounts')->name('accounts');
-Route::get('/ajaxAccountData', 'Setting@ajaxAccountData')->name('ajaxAccountData');
-Route::post('/account-save', 'Setting@accountSave')->name('account-save');
-Route::get('/taxRate', 'Setting@taxRate')->name('taxRate');
-Route::post('/tax-save', 'Setting@taxSave')->name('tax-save');
-Route::get('/ajaxTaxData', 'Setting@ajaxTaxData')->name('ajaxTaxData');
-
-Auth::routes();
-Route::get('get-data-my-datatables/{type}/{view}', ['as'=>'get.data','uses'=>'Users@getData']);
-Route::post('/noteSave', 'Users@noteSave')->name('noteSave');
-Route::get('/home', 'HomeController@index')->name('home');
-//Route::get('/client', 'Users@client')->name('client');
-Route::get('generate-pdf','ReportsController@generatePDF');
-
-Route::get('/reports', 'ReportsController@index');
-Route::get('/balance-sheet', 'ReportsController@balanceSheet')->name('balance-sheet');
-Route::get('/cash-summary', 'ReportsController@cashSummary')->name('cash-summary');
-Route::get('/profit-loss', 'ReportsController@profitLoss')->name('profit-loss');
-*/
+Route::get('export', 'ExcelController@export')->name('export');
+Route::get('importExportView', 'ExcelController@importExportView');
+Route::post('import', 'ExcelController@import')->name('import');
